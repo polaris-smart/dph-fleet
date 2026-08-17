@@ -1,7 +1,6 @@
 {
   "name": "dph-fleet",
-  "version": "0.2.3",
-  "private": true,
+  "version": "0.2.4",
   "type": "module",
   "description": "NoFox Fleet 合一插件（FLEET-V02-MERGE）：mDNS 同网发现+密钥配对 + SSH 跨网直连，一个插件两模块按需启用，零 npm 纯 Node 标准库。",
   "bin": {
@@ -36,14 +35,5 @@
       "patch": "./cordis.patch.yml"
     }
   },
-  "main": "src/plugin.ts",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/polaris-smart/dph-fleet.git"
-  },
-  "homepage": "https://github.com/polaris-smart/dph-fleet#readme",
-  "bugs": {
-    "url": "https://github.com/polaris-smart/dph-fleet/issues"
-  },
-  "license": "MIT"
+  "main": "src/plugin.ts"
 }

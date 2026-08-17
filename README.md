@@ -1,10 +1,5 @@
 # dph-fleet
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Release](https://img.shields.io/github/v/release/polaris-smart/dph-fleet)](https://github.com/polaris-smart/dph-fleet/releases)
-[![Tests](https://img.shields.io/badge/tests-84%20pass-brightgreen)](./test)
-
-
 **Turn your devices into a fleet.**
 **把你的设备变成一个舰队。**
 
@@ -32,8 +27,11 @@ node --version   # 需要 Node 22+（dph 运行要求）
 **第 2 步 / Step 2**：安装插件 / Install the plugin
 
 ```sh
-# 从 release 下载 dph-fleet-<version>.tgz 后：
-dsh plugin add ./dph-fleet-0.2.3.tgz
+# 一条命令（npm 源）/ One command from npm:
+dsh plugin add dph-fleet
+
+# 或从 GitHub Releases 下载 tgz / Or install a release tgz:
+dsh plugin add ./dph-fleet-<version>.tgz
 ```
 
 看到安装成功且无 warning 即可。装完 dph 会话内自动注册 4 个 `fleet_*` 工具。
@@ -119,20 +117,6 @@ fleet8 ssh my-server "hostname"
 Then use `fleet_ssh_exec` / `fleet_workspace` in dph sessions.
 
 ---
-
-
-## 工作原理 · How It Works
-
-```text
-设备 A（主控）                     设备 B（被控）
-  fleet_discover ── mDNS 组播 ──>  fleet7 serve（广播）
-  fleet_pair(key) ── 配对请求 ──>  校验 key → A 公钥进 authorized_keys
-       │                           （联动：A 写 SSH 注册表）
-  fleet_ssh_exec ── SSH 直连 ──>  执行命令，返回结果
-```
-
-配对后即永久直连：无中心服务器，任何已配对设备之间都可双向指挥。
-Pair once, direct forever: no central server; any paired pair can command each other both ways.
 
 ## 工具一览 · Tools
 
