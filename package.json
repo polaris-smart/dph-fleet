@@ -36,5 +36,14 @@
       "patch": "./cordis.patch.yml"
     }
   },
-  "main": "src/plugin.ts"
+  "main": "src/plugin.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/polaris-smart/dph-fleet.git"
+  },
+  "homepage": "https://github.com/polaris-smart/dph-fleet#readme",
+  "bugs": {
+    "url": "https://github.com/polaris-smart/dph-fleet/issues"
+  },
+  "license": "MIT"
 }
