@@ -1,0 +1,40 @@
+{
+  "name": "dph-fleet",
+  "version": "0.2.3",
+  "private": true,
+  "type": "module",
+  "description": "NoFox Fleet 合一插件（FLEET-V02-MERGE）：mDNS 同网发现+密钥配对 + SSH 跨网直连，一个插件两模块按需启用，零 npm 纯 Node 标准库。",
+  "bin": {
+    "fleet7": "bin/fleet7",
+    "fleet8": "bin/fleet8",
+    "fleet-mdns": "bin/fleet7",
+    "fleet-ssh": "bin/fleet8"
+  },
+  "engines": {
+    "node": ">=22.18"
+  },
+  "files": [
+    "src/",
+    "bin/",
+    "cordis.patch.yml",
+    "README.md",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "typecheck": "tsc --noEmit",
+    "smoke": "bash smoke.sh",
+    "pack": "npm pack"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "*",
+    "@deepseek-ai/dsh-tools": "*",
+    "@deepseek-ai/schemastery": "*"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "main": "src/plugin.ts"
+}

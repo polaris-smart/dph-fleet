@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+# fleet8 SSH 池 CLI 壳：Node 22 原生 type stripping 直跑源码，零构建。
+exec node "$(dirname "$0")/../src/cli.ts" "$@"

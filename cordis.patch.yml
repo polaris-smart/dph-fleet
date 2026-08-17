@@ -1,0 +1,13 @@
+# dph-fleet 合一插件挂载层（headless profile overlay）。
+# 用法（插件 name 必须是绝对路径）：
+#   pnpm dsh --profile headless --patch <本文件绝对路径> "调用 fleet_discover 工具"
+# 数据目录：DSH_HOME（设备身份 fleet-lan.json）+ FLEET_HOME（paired-devices.json /
+#   ssh-devices.json / ssh-keys/ / ssh-sockets/）。
+#
+# 模块开关 config.modules：mdns（仅局域网）| ssh（仅 SSH 直连）| both（默认，两模块全开）。
+# 关掉的模块工具不注册。安装姿势见 README「dsh plugin add」。
+- insert:
+    - id: dph-fleet
+      name: dph-fleet
+      config:
+        modules: both
