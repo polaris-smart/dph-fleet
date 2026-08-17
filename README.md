@@ -175,10 +175,8 @@ A: You likely have an outdated package — download the latest tgz from the Rele
 遇到问题或有想法：
 Found a bug or have an idea?
 
-- **提 Issue / 提 PR**：直接在本仓库提，PR 欢迎（P0：任务簿抢单/SFTP 见路线图）
-  Open an issue or submit a PR right here — PRs are welcome.
-- **邮件**：fleet@nofox.cn
-  Email us: fleet@nofox.cn
+- **提 Issue**：问题反馈直接在本仓库提 / Open an issue in this repo
+- **提 PR**：欢迎，路线图里的活儿都可以认领 / PRs welcome — pick anything from the roadmap
 
 ## 路线图 · Roadmap
 
