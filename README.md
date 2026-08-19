@@ -201,6 +201,8 @@ Then use `fleet_ssh_exec` / `fleet_workspace` in dph sessions.
 | mdns | `fleet_pair` | 输密钥配对 | Pair with device key |
 | ssh | `fleet_ssh_exec` | 在已配对设备执行命令 | Run a command on a paired device |
 | ssh | `fleet_workspace` | 设置/查看远程工作区 | Set/view remote workspace |
+| ssh | `fleet_upload` | 上传文件到已配对设备 | Upload a file to a paired device |
+| ssh | `fleet_download` | 从已配对设备下载文件 | Download a file from a paired device |
 
 关掉的模块工具不注册：`modules=mdns` 只有前两个，`modules=ssh` 只有后两个，`both` 全开。
 Disabled modules don't register their tools.
