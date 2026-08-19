@@ -5,7 +5,7 @@
 // 无头设备兼容：密钥即信任，配对不弹窗。合一联动：配对成功时若根插件提供了 link 句柄，
 // 则把主控 SSH 公钥随配对请求发给被控（被控授权），成功后回调写 SSH 注册表。
 
-import type { Context } from '@deepseek-ai/cordis'
+import type { FleetContext } from '../types.ts'
 
 import { ensureIdentity, identityFile, pairedFile } from './identity.ts'
 import { loadPaired, savePaired, upsertPaired, pairWithDevice } from './pair.ts'
@@ -36,7 +36,7 @@ export interface MdnsLink {
  * @param ctx - 携带 ctx.tools 的插件上下文。
  * @param opts - mDNS 模块配置。
  */
-export function registerMdnsTools(ctx: Context, opts: MdnsModuleConfig): void {
+export function registerMdnsTools(ctx: FleetContext, opts: MdnsModuleConfig): void {
   ctx.tools.register({
     name: 'fleet_discover',
     description: '局域网 mDNS 发现同网段所有 fleet 设备（设备名/地址/能力/是否已配对）。返回发现列表；未发现返回「未发现同网 fleet 设备」。',
@@ -45,7 +45,7 @@ export function registerMdnsTools(ctx: Context, opts: MdnsModuleConfig): void {
       schema: { type: 'string' },
       render: (_args, value) => [{ type: 'text', text: value }],
     },
-    async execute(_args, exec) {
+    async execute(_args: Record<string, unknown>, exec: { signal: AbortSignal }) {
       const identity = ensureIdentity({ file: identityFile(), name: opts.deviceName || undefined, hub: opts.hub });
       void identity;
       const paired = loadPaired(pairedFile());
@@ -70,7 +70,7 @@ export function registerMdnsTools(ctx: Context, opts: MdnsModuleConfig): void {
       schema: { type: 'string' },
       render: (_args, value) => [{ type: 'text', text: value }],
     },
-    async execute(args, exec) {
+    async execute(args: Record<string, unknown>, exec: { signal: AbortSignal }) {
       const identity = ensureIdentity({ file: identityFile(), name: opts.deviceName || undefined, hub: opts.hub });
       const paired = loadPaired(pairedFile());
       const { devices } = await discoverWithPaired({
@@ -78,11 +78,11 @@ export function registerMdnsTools(ctx: Context, opts: MdnsModuleConfig): void {
         timeoutMs: DISCOVER_TIMEOUT_MS,
         signal: exec.signal,
       });
-      const target = resolveTarget(args.target, devices);
+      const target = resolveTarget(typeof args.target === 'string' ? args.target : '', devices);
       if ('error' in target) return target.error;
       const masterPubKey = opts.link?.masterPublicKey();
       const result = await pairWithDevice(
-        { address: target.address, port: target.port, key: args.key, masterPubKey },
+        { address: target.address, port: target.port, key: typeof args.key === 'string' ? args.key : '', masterPubKey },
         { deviceId: identity.deviceId, name: identity.name },
       );
       if (!result.ok) return result.error;

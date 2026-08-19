@@ -3,7 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import type { Context } from '@deepseek-ai/cordis';
+import type { FleetContext } from '../src/types.ts';
 import { apply, Config } from '../src/plugin.ts';
 import type { Config as PluginConfig } from '../src/config.ts';
 
@@ -16,7 +16,7 @@ interface CapturedTool {
 }
 
 /** 构造假 ctx：tools.register 捕获定义 + inject 桩（/fleet 命令需要）。 */
-function capture(): { ctx: Context; tools: CapturedTool[] } {
+function capture(): { ctx: FleetContext; tools: CapturedTool[] } {
   const tools: CapturedTool[] = [];
   const ctx = {
     tools: {
@@ -29,7 +29,7 @@ function capture(): { ctx: Context; tools: CapturedTool[] } {
       fn({ commands: { register(): void {} } });
     },
   };
-  return { ctx: ctx as unknown as Context, tools };
+  return { ctx: ctx as unknown as FleetContext, tools };
 }
 
 const base: PluginConfig = {
@@ -48,11 +48,13 @@ function registeredNames(config: PluginConfig): string[] {
   return tools.map((t) => t.name).sort();
 }
 
-test('modules=both 注册 4 工具（mdns 2 + ssh 2）', () => {
+test('modules=both 注册 6 工具（mdns 2 + ssh 4）', () => {
   assert.deepEqual(registeredNames({ ...base, modules: 'both' }), [
     'fleet_discover',
+    'fleet_download',
     'fleet_pair',
     'fleet_ssh_exec',
+    'fleet_upload',
     'fleet_workspace',
   ]);
 });
@@ -61,8 +63,8 @@ test('modules=mdns 只注册 2 工具（无 ssh 工具）', () => {
   assert.deepEqual(registeredNames({ ...base, modules: 'mdns' }), ['fleet_discover', 'fleet_pair']);
 });
 
-test('modules=ssh 只注册 2 工具（无 mdns 工具）', () => {
-  assert.deepEqual(registeredNames({ ...base, modules: 'ssh' }), ['fleet_ssh_exec', 'fleet_workspace']);
+test('modules=ssh 只注册 4 工具（无 mdns 工具）', () => {
+  assert.deepEqual(registeredNames({ ...base, modules: 'ssh' }), ['fleet_download', 'fleet_ssh_exec', 'fleet_upload', 'fleet_workspace']);
 });
 
 test('Config 默认值：modules=both + 其余默认', () => {

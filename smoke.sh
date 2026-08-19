@@ -45,14 +45,14 @@ fail() { echo "FAIL：$1" >&2; exit 1; }
 
 fleet7() { DSH_HOME="$A_DSH" FLEET_HOME="$A_FLT" node "$DIR/src/mdns/cli.ts" "$@"; }
 
-# 按 modules 启动插件（经 Config schema 填默认），返回注册工具名逗号列表。
+# 按 modules 启动插件（Config 纯对象合并），返回注册工具名逗号列表。
 count_tools() {
   TOOLS_CONFIG="{\"modules\":\"$1\"}" node --input-type=module -e '
 import { apply, Config } from "./src/plugin.ts";
 const raw = JSON.parse(process.env.TOOLS_CONFIG);
-const { value } = Config["~standard"].validate(raw);
+const value = { ...Config, ...raw };
 const tools = [];
-apply({ tools: { register(def) { tools.push(def.name); return () => {}; } } }, value);
+apply({ tools: { register(def) { tools.push(def.name); return () => {}; } }, inject(_d, fn) { fn({ commands: { register() {} } }); } }, value);
 console.log(tools.sort().join(","));
 '
 }

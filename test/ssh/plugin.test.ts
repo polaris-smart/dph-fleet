@@ -7,7 +7,7 @@ import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import type { Context } from '@deepseek-ai/cordis';
+import type { FleetContext } from '../../src/types.ts';
 import { registerSshTools } from '../../src/ssh/plugin.ts';
 import { saveSshDevices } from '../../src/ssh/config.ts';
 import type { SshDevice } from '../../src/ssh/types.ts';
@@ -21,7 +21,7 @@ interface CapturedTool {
 }
 
 /** 构造假 ctx：tools.register 捕获定义。 */
-function capture(): { ctx: Context; tools: CapturedTool[] } {
+function capture(): { ctx: FleetContext; tools: CapturedTool[] } {
   const tools: CapturedTool[] = [];
   const ctx = {
     tools: {
@@ -31,7 +31,7 @@ function capture(): { ctx: Context; tools: CapturedTool[] } {
       },
     },
   };
-  return { ctx: ctx as unknown as Context, tools };
+  return { ctx: ctx as unknown as FleetContext, tools };
 }
 
 function sampleDevice(deviceId = 'my-laptop'): SshDevice {
@@ -51,11 +51,11 @@ function sampleDevice(deviceId = 'my-laptop'): SshDevice {
 const defaultConfig = { fleetHome: '' };
 const sig = new AbortController().signal;
 
-test('registerSshTools 注册 fleet_ssh_exec + fleet_workspace 两个工具', () => {
+test('registerSshTools 注册 4 个工具（exec/workspace/upload/download）', () => {
   const { ctx, tools } = capture();
   registerSshTools(ctx, defaultConfig);
   const names = tools.map((t) => t.name).sort();
-  assert.deepEqual(names, ['fleet_ssh_exec', 'fleet_workspace']);
+  assert.deepEqual(names, ['fleet_download', 'fleet_ssh_exec', 'fleet_upload', 'fleet_workspace']);
 });
 
 test('fleet_ssh_exec：缺 host/command 返回可读错误（不抛异常）', async () => {

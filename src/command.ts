@@ -2,19 +2,19 @@
 // 用户在 dsh UI 敲 /fleet 即显示本机状态 + 已配对设备 + 使用帮助（不依赖模型工具调用）。
 // 这是解决"装完不知道下一步做什么"的关键入口。
 
-import type { Context } from '@deepseek-ai/cordis'
+import type { FleetContext } from './types.ts'
 import { identityFile, pairedFile, loadIdentity, fleetHome } from './mdns/identity.ts'
 import { loadPaired } from './mdns/pair.ts'
 import { sshDevicesFile, loadSshDevices } from './ssh/config.ts'
 
 /** 注册 /fleet 命令（commands 服务存在时）。 */
-export function registerFleetCommand(ctx: Context): void {
+export function registerFleetCommand(ctx: FleetContext): void {
   ctx.inject(['commands'], (commandCtx) => {
-    commandCtx.commands.register({
+    (commandCtx as unknown as { commands?: { register(cmd: unknown): void } }).commands?.register({
       name: 'fleet',
       description: 'dph-fleet：查看组网状态 / 配对设备 / 使用帮助',
       input: { hint: '[status | discover | pair <addr> <key> | ssh <target> <cmd>]' },
-      handler: ({ rawInput }) => {
+      handler: ({ rawInput }: { rawInput: string }) => {
         const args = rawInput.trim();
         const home = fleetHome();
 

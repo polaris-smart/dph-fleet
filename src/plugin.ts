@@ -5,7 +5,7 @@
 //   - 关掉的模块工具不注册（不出现半死工具）。
 // 合一联动（灵魂功能）：mdns 开 + ssh 开时，mDNS 配对成功自动写入 SSH 设备注册表。
 
-import type { Context } from '@deepseek-ai/cordis'
+import type { FleetContext } from './types.ts'
 import { userInfo } from 'node:os'
 
 import { Config } from './config.ts'
@@ -32,7 +32,7 @@ export { Config }
  * @param ctx - 携带 ctx.tools 的插件上下文。
  * @param config - Schemastery 校验并填默认后的插件配置。
  */
-export function apply(ctx: Context, config: PluginConfig): void {
+export function apply(ctx: FleetContext, config: PluginConfig): void {
   const sshEnabled = config.modules === 'ssh' || config.modules === 'both';
   const mdnsEnabled = config.modules === 'mdns' || config.modules === 'both';
 
