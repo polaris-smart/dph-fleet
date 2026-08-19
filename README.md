@@ -35,29 +35,41 @@
 
 ## 快速开始 · Quick Start
 
-**一条命令，装完即用 / One command, done:**
+从零到用，5 步 / From zero to use in 5 steps:
 
+```
+┌──────────────┐          ┌──────────────┐
+│  设备 A（你）  │          │  设备 B（对方） │
+│  dph + Fleet  │◄────────►│  dph + Fleet  │
+│  主控/指挥     │  配对连接  │  被控/执行    │
+└──────────────┘          └──────────────┘
+     ↑ 你说："在 B 上跑 hostname"
+     └─ agent 调 fleet_ssh_exec → B 返回结果
+```
+
+**第 1 步：装 dsh**（还没有的话）/ Install dsh if you don't have it:
+```sh
+npm install -g @deepseek-ai/dsh
+```
+
+**第 2 步：两台设备都装 Fleet**（配对是双向的，单台没用）/ Install Fleet on **both** devices:
 ```sh
 dsh plugin add dph-fleet
 ```
 
-装进 dsh profile 后，插件随 dsh 一起运行（`dsh web` / `dsh --profile headless`）——**dsh 在跑，Fleet 就在**；重启 dsh 会话后，会话内自动注册 `fleet_*` 工具，任何 dph 里的 agent 都能直接调用。无需配置系统服务、无需自启脚本。
-Installed into your dsh profile, the plugin lives and dies with dsh (`dsh web` / `dsh --profile headless`) — **dsh running means Fleet running**. After restarting the dsh session, `fleet_*` tools auto-register and any dph-hosted agent can call them. No system services, no cron, no manual setup.
+**第 3 步：重启 dsh 会话**（让插件加载）/ Restart the dsh session:
+```sh
+dsh web              # 或 dsh --profile headless "…"
+```
 
-> 没有 dsh？先装 [DeepSeek Harness](https://github.com/deepseek-ai/dsh)（官方 Coding Agent），再 `dsh plugin add dph-fleet`。
-> No dsh yet? Install [DeepSeek Harness](https://github.com/deepseek-ai/dsh) first, then `dsh plugin add dph-fleet`.
+**第 4 步：连接两台设备**（二选一）/ Connect the two devices (pick one):
+- **同一局域网**：两台都开机，B 的 agent 开广播（"启动 fleet 广播"），你在 A 的会话说"发现设备并配对"
+- **跨网络（B 有公网 SSH）**：对 A 的 agent 说"用 fleet8 配对服务器 <IP>，用户 <用户名>，名字 <别名>"，agent 把公钥给你 → 你贴到 B 的 `authorized_keys`
 
-> 也可以下载 Release 的 tgz 本地安装：`dsh plugin add ./dph-fleet-<version>.tgz`。
-> Or grab the tgz from Releases: `dsh plugin add ./dph-fleet-<version>.tgz`.
-
-**怎么用？就像聊天一样 / How to use? Just chat:**
-
-装完后，**在 dph 对话框里用自然语言提需求**——背后由 agent 自动调 Fleet 工具完成，你看不到中间环节：
-After install, just talk to your dph agent in plain language — the agent calls Fleet tools behind the scenes:
-
+**第 5 步：像聊天一样用** / Use it like a chat:
 ```text
 你：帮我连上我的服务器，看看它现在什么状态
-agent：已连接 my-server（43.135.x.x），当前内存可用 1.2G、负载 0.01、磁盘 51%。
+agent：已连接 my-server（43.135.x.x），内存可用 1.2G、负载 0.01、磁盘 51%。
 
 你：在服务器上跑一下 hostname
 agent：返回：VM-0-11-ubuntu
@@ -68,6 +80,9 @@ agent：备份完成，输出：…
 
 **不需要记命令**——发现设备、配对、执行，都是 agent 在会话里调 `fleet_discover` / `fleet_pair` / `fleet_ssh_exec` 完成的。
 No commands to memorize — discovery, pairing, and execution are all done by the agent calling `fleet_discover` / `fleet_pair` / `fleet_ssh_exec` in your session.
+
+> 也可以下载 Release 的 tgz 本地安装：`dsh plugin add ./dph-fleet-<version>.tgz`。
+> Or grab the tgz from Releases: `dsh plugin add ./dph-fleet-<version>.tgz`.
 
 ---
 
