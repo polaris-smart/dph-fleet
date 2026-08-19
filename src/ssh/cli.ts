@@ -15,6 +15,7 @@ import {
   upsertSshDevice,
 } from './pool.ts';
 import { sshExec } from './ssh.ts';
+import { scpUpload, scpDownload } from './sftp.ts';
 import { getWorkspace, setWorkspace } from './workspace.ts';
 import type { SshDevice } from './types.ts';
 
@@ -32,6 +33,10 @@ function usage(): string {
     '      SSH 直连执行命令（目标 = deviceId / host / name）',
     '  fleet8 workspace <目标> [目录]',
     '      设置（给目录）/查看（不给目录）远程工作区',
+    '  fleet8 upload <目标> <本地文件> <远端路径>',
+    '      上传文件到已配对设备（沿 SSH 通道）',
+    '  fleet8 download <目标> <远端文件> <本地路径>',
+    '      从已配对设备下载文件（沿 SSH 通道）',
     '  fleet8 remove <目标>',
     '      移除已配对设备',
     '  fleet8 pubkey <目标>',
@@ -162,6 +167,46 @@ async function cmdWorkspace(argv: string[]): Promise<void> {
   }
 }
 
+/** 上传文件到已配对设备：fleet8 upload <目标> <本地文件> <远端路径>。 */
+async function cmdUpload(argv: string[]): Promise<void> {
+  const { positionals } = parseArgs(argv);
+  const target = positionals[0];
+  const local = positionals[1];
+  const remote = positionals[2];
+  if (!target) fail('upload 需要目标参数');
+  if (!local) fail('upload 需要本地文件路径');
+  if (!remote) fail('upload 需要远端目标路径');
+  const devices = loadSshDevices(sshDevicesFile());
+  const paired = assertPaired(devices, target);
+  if ('error' in paired) fail(paired.error);
+  const r = await scpUpload(paired.device, local, remote, { socketDir: sshSocketsDir() });
+  if (!r.ok) {
+    process.stderr.write(`fleet8: ${r.error ?? '上传失败'}\n`);
+    process.exit(1);
+  }
+  process.stdout.write(`已上传 ${local} → ${remote}（设备 ${paired.device.deviceId}）\n`);
+}
+
+/** 下载文件到本机：fleet8 download <目标> <远端文件> <本地路径>。 */
+async function cmdDownload(argv: string[]): Promise<void> {
+  const { positionals } = parseArgs(argv);
+  const target = positionals[0];
+  const remote = positionals[1];
+  const local = positionals[2];
+  if (!target) fail('download 需要目标参数');
+  if (!remote) fail('download 需要远端文件路径');
+  if (!local) fail('download 需要本地保存路径');
+  const devices = loadSshDevices(sshDevicesFile());
+  const paired = assertPaired(devices, target);
+  if ('error' in paired) fail(paired.error);
+  const r = await scpDownload(paired.device, remote, local, { socketDir: sshSocketsDir() });
+  if (!r.ok) {
+    process.stderr.write(`fleet8: ${r.error ?? '下载失败'}\n`);
+    process.exit(1);
+  }
+  process.stdout.write(`已下载 ${remote} → ${local}（设备 ${paired.device.deviceId}）\n`);
+}
+
 /** 移除已配对设备。 */
 function cmdRemove(argv: string[]): void {
   const { positionals } = parseArgs(argv);
@@ -202,6 +247,8 @@ async function main(): Promise<void> {
     case 'list': cmdList(); return;
     case 'ssh': await cmdSsh(rest); return;
     case 'workspace': await cmdWorkspace(rest); return;
+    case 'upload': await cmdUpload(rest); return;
+    case 'download': await cmdDownload(rest); return;
     case 'remove': cmdRemove(rest); return;
     case 'pubkey': cmdPubkey(rest); return;
     default:
