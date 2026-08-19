@@ -21,7 +21,7 @@ import type { SshDevice } from './types.ts';
 /** 顶层帮助文本。 */
 function usage(): string {
   return [
-    'fleet8 — NoFox Fleet SSH 池轻量执行（主控直连被控，不经 hub）',
+    'fleet8 — dph-fleet SSH 池轻量执行（主控直连被控，不经 hub）',
     '',
     '用法:',
     '  fleet8 pair <host> [--port 22] [--user 用户] [--id 别名] [--name 友好名] [--key 私钥路径]',

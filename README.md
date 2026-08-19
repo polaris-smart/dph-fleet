@@ -240,6 +240,18 @@ A: Use Scenario B manual pairing; check port 22 reachability and that the public
 你拿到的可能是旧包——请从 Release 页下载最新版 tgz。
 A: You likely have an outdated package — download the latest tgz from the Releases page.
 
+**Q: 装完怎么确认 Fleet 可用？**
+重启 dsh 会话后，在会话里敲 `/fleet`——能看到本机身份 + 已配对设备列表即成功；或直接让 agent 调 `fleet_discover`（同网会返回设备列表，跨网返回"未发现同网设备"也属正常）。
+A: After restarting the dsh session, type `/fleet` — seeing your device identity and paired devices means it works. Or ask the agent to call `fleet_discover`.
+
+**Q: 装了但会话里没有 `fleet_*` 工具？**
+确认三件事：① `dsh plugin add dph-fleet` 装到了你正在用的 profile（`dsh plugin --profile <name> add dph-fleet`）② 会话已重启 ③ dsh 版本为 Node 22+（`node --version`）。都满足仍没有，把 `dsh plugin` 输出发 Issue。
+A: Check: ① the plugin was added to the profile you're booting (`dsh plugin --profile <name> add dph-fleet`) ② the session was restarted ③ Node 22+ (`node --version`). Still missing? Open an issue with the `dsh plugin` output.
+
+**Q: `fleet_ssh_exec` 连接超时？**
+先确认对端 22 端口可达（`nc -vz <ip> 22` 或 `fleet8 ssh <name> hostname`）；确认对端公钥已进 `authorized_keys`；超时通常是网络/防火墙问题，不是插件问题。
+A: Verify port 22 reachability (`nc -vz <ip> 22` or `fleet8 ssh <name> hostname`) and that the public key is in the target's `authorized_keys`. Timeouts are usually network/firewall issues, not plugin issues.
+
 ## 参与贡献 · Contributing
 
 遇到问题或有想法：
@@ -259,9 +271,9 @@ Found a bug or have an idea?
 ## 更新日志 · Changelog
 
 **v0.2.9**（2026-08-19）
-- 📦 干净重发：v0.2.8 的构建产物曾混入无关模块残留，已彻底清理（dist 重建 + 全包复查），**本版为纯组网 Fleet**
-- npm 上的 v0.2.8 / v0.3.0 / v0.3.1 已撤销（版本号被 npm 锁定不可重发），改用 v0.2.9 承载
-- 功能与 v0.2.7 一致：mDNS 同网发现 + 密钥配对 + SSH 跨网直连 + `/fleet` 命令；模块开关 `modules: mdns | ssh | both`
+- 🔧 零依赖化重构：去除对 dsh-tools/schemastery 的运行时依赖，任何 dsh 环境（源码或 npm 安装）都能直接 `dsh plugin add` 安装
+- ✨ 插件入口指向预编译产物，安装即用，无需构建
+- 功能：mDNS 同网发现 + 密钥配对 + SSH 跨网直连 + `/fleet` 命令；模块开关 `modules: mdns | ssh | both`
 
 **v0.2.8**（2026-08-19）
 - 🔧 回归纯组网定位：**移除 agent 模块与 `agent_ask` 工具**，Fleet 专注多设备组网协作（mDNS 同网发现 + 密钥配对 + SSH 跨网直连 + `/fleet` 命令）

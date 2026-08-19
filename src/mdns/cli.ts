@@ -188,7 +188,7 @@ function cmdPaired(): void {
 }
 
 function usage(): void {
-  console.error(`fleet7 — NoFox Fleet 局域网 CLI（mDNS 发现 + 密钥配对）
+  console.error(`fleet7 — dph-fleet 局域网 CLI（mDNS 发现 + 密钥配对）
 
 用法：
   fleet7 keygen [--name 设备名] [--hub <url>]

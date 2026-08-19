@@ -12,7 +12,7 @@ export function registerFleetCommand(ctx: Context): void {
   ctx.inject(['commands'], (commandCtx) => {
     commandCtx.commands.register({
       name: 'fleet',
-      description: 'NoFox Fleet：查看组网状态 / 配对设备 / 使用帮助',
+      description: 'dph-fleet：查看组网状态 / 配对设备 / 使用帮助',
       input: { hint: '[status | discover | pair <addr> <key> | ssh <target> <cmd>]' },
       handler: ({ rawInput }) => {
         const args = rawInput.trim();
@@ -40,7 +40,7 @@ export function registerFleetCommand(ctx: Context): void {
           return {
             kind: 'success' as const,
             text: [
-              `📡 NoFox Fleet（数据目录 ${home}）`,
+              `📡 dph-fleet（数据目录 ${home}）`,
               idLine,
               '',
               '🔗 mDNS 已配对设备：',
@@ -81,7 +81,7 @@ export function registerFleetCommand(ctx: Context): void {
         return {
           kind: 'success' as const,
           text: [
-            `📡 NoFox Fleet`,
+            `📡 dph-fleet`,
             idLine,
             '',
             '可用命令：/fleet status（默认）· /fleet discover · /fleet pair · /fleet ssh',
