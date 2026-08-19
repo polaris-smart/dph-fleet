@@ -3,16 +3,17 @@
 **Turn your devices into a fleet.**
 **把你的设备变成一个舰队。**
 
-一个 [dph](https://github.com/deepseek-ai/dsh) 插件，让你的多台设备（笔记本 / 台式机 / 服务器）组网协作：同网自动发现、密钥配对、跨网直连执行。
-A dph plugin that lets your devices (laptops / desktops / servers) form a network and collaborate: automatic LAN discovery, key pairing, cross-network direct execution.
+一个 [dph](https://github.com/deepseek-ai/dsh) 插件，让你的多台设备（笔记本 / 台式机 / 服务器）组网协作：同网自动发现、密钥配对、跨网直连执行。装完在 dph 会话内自动注册工具，**任何跑在 dph 里的智能体（agent）都能直接调用**。
+A dph plugin that lets your devices (laptops / desktops / servers) form a network and collaborate: automatic LAN discovery, key pairing, cross-network direct execution. Tools auto-register in dph sessions — **any dph-hosted agent can call them directly**.
 
 | | 中文 | English |
 |---|---|---|
 | 同网发现 | 局域网设备装完即互见，零配置 | LAN devices see each other instantly, zero config |
 | 密钥配对 | 输一个 key 完成配对（WiFi 式），无头设备友好 | Pair with one key (WiFi-style), headless friendly |
 | 跨网直连 | 配对后直接指挥远端干活，不手输 IP | Command paired devices directly, no manual IP |
+| 智能体原生 | dph 会话内自动注册工具，agent 直接调 | Tools auto-register for dph agents |
 | 模块开关 | `modules: mdns \| ssh \| both`，按需启用 | Enable what you need |
-| 零依赖 | 纯 Node 22 标准库，无构建 | Pure Node 22 stdlib, zero npm deps, no build |
+| 轻依赖 | 运行时零 npm 依赖，纯 Node 22 标准库 | Zero runtime deps, pure Node 22 stdlib |
 
 ---
 
@@ -130,6 +131,9 @@ Then use `fleet_ssh_exec` / `fleet_workspace` in dph sessions.
 关掉的模块工具不注册：`modules=mdns` 只有前两个，`modules=ssh` 只有后两个，`both` 全开。
 Disabled modules don't register their tools.
 
+**智能体直接调用 / Call from any dph agent**：装完插件，在你的 dph 会话里对 AI 说一句"调用 `fleet_discover`"即可发现设备；配合同网另一台设备的密钥后即可用 `fleet_ssh_exec` 指挥它。无需额外配置——工具注册给 dph 会话内的所有 agent（hermes、zcode 等）。
+After install, just say "call `fleet_discover`" in your dph session to see LAN devices; pair once, then command remote devices with `fleet_ssh_exec`. No extra config — tools are exposed to every agent in the dph session.
+
 **安全约定 / Security**：只连已配对设备；密钥文件强制 0600；所有错误返回可读文本，不炸会话。
 Only paired devices are reachable; key files must be 0600; all errors return readable text instead of throwing.
 
@@ -188,6 +192,20 @@ Found a bug or have an idea?
 - [ ] SFTP 文件传输 / SFTP file transfer
 - [ ] 交互式安装向导 / Interactive setup wizard
 - mDNS 发现目前为 beta，大规模组网欢迎反馈 / mDNS discovery is beta — feedback welcome
+
+## 更新日志 · Changelog
+
+**v0.2.5**（2026-08-19）
+- 🐛 修复 CLI：`fleet7` / `fleet8` 在 Node 22 下 npm 安装后可用（预编译 `dist/`，根治 node_modules 内 .ts type stripping 限制）
+- ✨ 发布携带编译产物，命令行无需构建即可运行
+- 不影响 dph 会话工具（cordis 加载，原本正常）
+
+**v0.2.4**（2026-08-17）
+- 发布到 npm：一条命令 `dsh plugin add dph-fleet` 安装
+- mDNS + SSH 两模块合一，`modules: mdns | ssh | both` 开关
+
+**v0.2.0**（2026-08-18）
+- 去中心化转向：mDNS 同网发现 + 密钥配对 + SSH 跨网直连，单插件交付
 
 ## 许可证 · License
 
