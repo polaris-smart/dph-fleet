@@ -317,6 +317,12 @@ Found a bug or have an idea?
 
 ## 更新日志 · Changelog
 
+**v0.2.10**（2026-08-20）
+- ✨ 新增 SFTP 文件传输：`fleet_upload` / `fleet_download`（沿已配对设备的 SSH 通道传文件，数据/文件可双向打通）
+- 🔧 零依赖化完成：去除对 dsh-tools/schemastery 的运行时与声明依赖，任何 dsh 环境（源码或 npm 安装）都能 `dsh plugin add` 直接安装
+- 🔧 插件入口指向预编译产物（dist/plugin.js），安装即用，无需构建
+- 功能：mDNS 同网发现 + 密钥配对 + SSH 跨网直连 + SFTP 文件传输 + `/fleet` 命令；模块开关 `modules: mdns | ssh | both`
+
 **v0.2.9**（2026-08-19）
 - 🔧 零依赖化重构：去除对 dsh-tools/schemastery 的运行时依赖，任何 dsh 环境（源码或 npm 安装）都能直接 `dsh plugin add` 安装
 - ✨ 插件入口指向预编译产物，安装即用，无需构建
