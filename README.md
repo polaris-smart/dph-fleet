@@ -195,6 +195,10 @@ Found a bug or have an idea?
 
 ## 更新日志 · Changelog
 
+**v0.2.6**（2026-08-19）
+- 📝 门面更新：README 突出"智能体直接调用"亮点、修复"零依赖"表述为"运行时零依赖"、新增 Changelog；npm 描述同步
+- 代码与 v0.2.5 相同，纯文档/元数据更新
+
 **v0.2.5**（2026-08-19）
 - 🐛 修复 CLI：`fleet7` / `fleet8` 在 Node 22 下 npm 安装后可用（预编译 `dist/`，根治 node_modules 内 .ts type stripping 限制）
 - ✨ 发布携带编译产物，命令行无需构建即可运行
