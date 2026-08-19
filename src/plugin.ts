@@ -14,6 +14,7 @@ import { registerMdnsTools } from './mdns/plugin.ts'
 import type { MdnsLink } from './mdns/plugin.ts'
 import { registerSshTools } from './ssh/plugin.ts'
 import { masterSshKey, linkPairedToSsh } from './link.ts'
+import { registerFleetCommand } from './command.ts'
 import type { LinkContext } from './link.ts'
 import type { PairedDevice } from './mdns/types.ts'
 
@@ -64,4 +65,7 @@ export function apply(ctx: Context, config: PluginConfig): void {
   if (sshEnabled) {
     registerSshTools(ctx, { fleetHome: config.fleetHome });
   }
+
+  // /fleet 斜杠命令：装完即用的"门"（dsh UI 敲 /fleet 看状态 + 帮助）
+  registerFleetCommand(ctx);
 }

@@ -1,6 +1,6 @@
 {
   "name": "dph-fleet",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "type": "module",
   "description": "NoFox Fleet：dph 多设备组网协作插件（mDNS 同网发现+密钥配对 + SSH 跨网直连）。装完 dph 会话内自动注册 4 个 fleet_* 工具，智能体（agent）直接调用；CLI 预编译，Node 22 即装即用。",
   "bin": {
