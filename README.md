@@ -15,8 +15,11 @@
 **零核心改动，纯插件挂载。** 一个 [dph](https://github.com/deepseek-ai/dsh) 插件，让你的多台设备（笔记本 / 台式机 / 服务器）组网协作。装完在 dph 会话内自动注册工具，**任何跑在 dph 里的智能体（agent）都能直接调用**。卸载后不留任何核心补丁。
 **Zero core changes, pure plugin mounting.** A dph plugin that lets your devices collaborate. Tools auto-register in dph sessions — **any dph-hosted agent can call them directly**. Uninstall leaves no core patches.
 
-> **适用前提 / Requirements**：Fleet 连接两种场景——① **同一局域网**且**放行 mDNS 广播**（UDP 5353，组播不跨路由器/子网）；② **公网可达设备**（有公网 IP 或端口映射）且**开通 SSH（22 端口）**。**NAT 内网设备之间**（如两台都在家庭/办公路由器后面）当前版本**无法直连**——需要 V2（P2P/tailscale 路线）。
-> Two supported scenarios: ① **same LAN** with **mDNS multicast allowed** (UDP 5353; doesn't cross routers/subnets); ② **publicly reachable devices** with **SSH (port 22) open**. NAT-isolated devices cannot connect to each other in this version (V2 = P2P/tailscale planned).
+> **适用前提 / Requirements**：
+> **① 至少 2 台设备都装 dph-fleet**（配对是双向的——只有一台装了没法配对，单设备装了没有配对对象）。
+> **② 连接方式二选一**：同一局域网且放行 mDNS 广播（UDP 5353，组播不跨路由器/子网）；或公网可达设备（有公网 IP 或端口映射）且开通 SSH（22 端口）。**NAT 内网设备之间**（如两台都在家庭/办公路由器后面）当前版本**无法直连**——需要 V2（P2P/tailscale 路线）。
+>
+> **Requirements**: ① **At least 2 devices, each with dph-fleet installed** (pairing is two-sided; a single device has nothing to pair with). ② Connectivity: same LAN with mDNS multicast allowed (UDP 5353; doesn't cross routers/subnets), **or** publicly reachable devices with SSH (port 22) open. NAT-isolated devices cannot connect to each other in this version (V2 = P2P/tailscale planned).
 
 | | 中文 | English |
 |---|---|---|
