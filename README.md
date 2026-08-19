@@ -47,6 +47,25 @@ Installed into your dsh profile, the plugin lives and dies with dsh (`dsh web` /
 > 也可以下载 Release 的 tgz 本地安装：`dsh plugin add ./dph-fleet-<version>.tgz`。
 > Or grab the tgz from Releases: `dsh plugin add ./dph-fleet-<version>.tgz`.
 
+**怎么用？就像聊天一样 / How to use? Just chat:**
+
+装完后，**在 dph 对话框里用自然语言提需求**——背后由 agent 自动调 Fleet 工具完成，你看不到中间环节：
+After install, just talk to your dph agent in plain language — the agent calls Fleet tools behind the scenes:
+
+```text
+你：帮我连上我的服务器，看看它现在什么状态
+agent：已连接 my-server（43.135.x.x），当前内存可用 1.2G、负载 0.01、磁盘 51%。
+
+你：在服务器上跑一下 hostname
+agent：返回：VM-0-11-ubuntu
+
+你：把备份脚本在服务器上执行一遍
+agent：备份完成，输出：…
+```
+
+**不需要记命令**——发现设备、配对、执行，都是 agent 在会话里调 `fleet_discover` / `fleet_pair` / `fleet_ssh_exec` 完成的。
+No commands to memorize — discovery, pairing, and execution are all done by the agent calling `fleet_discover` / `fleet_pair` / `fleet_ssh_exec` in your session.
+
 ---
 
 ## 安装 · Installation
