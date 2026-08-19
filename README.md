@@ -12,14 +12,17 @@
   <strong>Turn your devices into a fleet.</strong>
 </p>
 
-**零核心改动，纯插件挂载。** 一个 [dph](https://github.com/deepseek-ai/dsh) 插件，让你的多台设备（笔记本 / 台式机 / 服务器）组网协作：同网自动发现、密钥配对、跨网直连执行。装完在 dph 会话内自动注册工具，**任何跑在 dph 里的智能体（agent）都能直接调用**。卸载后不留任何核心补丁。
-**Zero core changes, pure plugin mounting.** A dph plugin that turns your devices into a collaborative fleet: automatic LAN discovery, key pairing, cross-network direct execution. Tools auto-register in dph sessions — **any dph-hosted agent can call them directly**. Uninstall leaves no core patches.
+**零核心改动，纯插件挂载。** 一个 [dph](https://github.com/deepseek-ai/dsh) 插件，让你的多台设备（笔记本 / 台式机 / 服务器）组网协作。装完在 dph 会话内自动注册工具，**任何跑在 dph 里的智能体（agent）都能直接调用**。卸载后不留任何核心补丁。
+**Zero core changes, pure plugin mounting.** A dph plugin that lets your devices collaborate. Tools auto-register in dph sessions — **any dph-hosted agent can call them directly**. Uninstall leaves no core patches.
+
+> **适用前提 / Requirements**：Fleet 连接两种场景——① **同一局域网**且**放行 mDNS 广播**（UDP 5353，组播不跨路由器/子网）；② **公网可达设备**（有公网 IP 或端口映射）且**开通 SSH（22 端口）**。**NAT 内网设备之间**（如两台都在家庭/办公路由器后面）当前版本**无法直连**——需要 V2（P2P/tailscale 路线）。
+> Two supported scenarios: ① **same LAN** with **mDNS multicast allowed** (UDP 5353; doesn't cross routers/subnets); ② **publicly reachable devices** with **SSH (port 22) open**. NAT-isolated devices cannot connect to each other in this version (V2 = P2P/tailscale planned).
 
 | | 中文 | English |
 |---|---|---|
-| 同网发现 | 局域网设备装完即互见，零配置 | LAN devices see each other instantly, zero config |
+| 同网发现 | 同一局域网 + 放行 mDNS 广播 → 设备互见 | Same LAN + mDNS allowed → devices see each other |
 | 密钥配对 | 输一个 key 完成配对（WiFi 式），无头设备友好 | Pair with one key (WiFi-style), headless friendly |
-| 跨网直连 | 配对后直接指挥远端干活，不手输 IP | Command paired devices directly, no manual IP |
+| 跨网直连 | 公网可达设备（开通 SSH）→ 直接指挥 | Public devices with SSH → direct command |
 | 智能体原生 | dph 会话内自动注册工具，agent 直接调 | Tools auto-register for dph agents |
 | 模块开关 | `modules: mdns \| ssh \| both`，按需启用 | Enable what you need |
 | 轻依赖 | 运行时零 npm 依赖，纯 Node 22 标准库 | Zero runtime deps, pure Node 22 stdlib |
@@ -121,6 +124,8 @@ Pair once, use forever — B has authorized A's public key; A remembers how to r
 
 设备不在同一局域网时（如家里指挥云服务器），手动配对：
 When devices are not on the same LAN (e.g., commanding a cloud server from home):
+
+> **让 agent 帮你配对 / Let your agent do the pairing**：配对命令也可以直接让 dph 会话里的 agent（或你的 ZCode / Hermes）执行——对 agent 说"用 fleet8 帮我配对服务器 203.0.113.7，用户 ubuntu，名字 my-server"，agent 会跑命令并把输出的公钥给你（你再贴到对端）。不需要自己记命令。
 
 **第 1 步 / Step 1**：在你这台（主控）生成配对 / Pair from your side
 
