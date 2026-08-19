@@ -1,10 +1,19 @@
 # dph-fleet
 
-**Turn your devices into a fleet.**
-**把你的设备变成一个舰队。**
+<p align="center">
+  <a href="https://www.npmjs.com/package/dph-fleet"><img alt="npm" src="https://img.shields.io/npm/v/dph-fleet?style=flat-square&color=4b6fff"></a>
+  <a href="https://github.com/polaris-smart/dph-fleet"><img alt="GitHub stars" src="https://img.shields.io/github/stars/polaris-smart/dph-fleet?style=flat-square&color=4b6fff"></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-263146?style=flat-square"></a>
+  <img alt="Platform" src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-7da1de?style=flat-square">
+</p>
 
-一个 [dph](https://github.com/deepseek-ai/dsh) 插件，让你的多台设备（笔记本 / 台式机 / 服务器）组网协作：同网自动发现、密钥配对、跨网直连执行。装完在 dph 会话内自动注册工具，**任何跑在 dph 里的智能体（agent）都能直接调用**。
-A dph plugin that lets your devices (laptops / desktops / servers) form a network and collaborate: automatic LAN discovery, key pairing, cross-network direct execution. Tools auto-register in dph sessions — **any dph-hosted agent can call them directly**.
+<p align="center">
+  <strong>把你的设备变成一个舰队。</strong><br>
+  <strong>Turn your devices into a fleet.</strong>
+</p>
+
+**零核心改动，纯插件挂载。** 一个 [dph](https://github.com/deepseek-ai/dsh) 插件，让你的多台设备（笔记本 / 台式机 / 服务器）组网协作：同网自动发现、密钥配对、跨网直连执行。装完在 dph 会话内自动注册工具，**任何跑在 dph 里的智能体（agent）都能直接调用**。卸载后不留任何核心补丁。
+**Zero core changes, pure plugin mounting.** A dph plugin that turns your devices into a collaborative fleet: automatic LAN discovery, key pairing, cross-network direct execution. Tools auto-register in dph sessions — **any dph-hosted agent can call them directly**. Uninstall leaves no core patches.
 
 | | 中文 | English |
 |---|---|---|
@@ -14,6 +23,27 @@ A dph plugin that lets your devices (laptops / desktops / servers) form a networ
 | 智能体原生 | dph 会话内自动注册工具，agent 直接调 | Tools auto-register for dph agents |
 | 模块开关 | `modules: mdns \| ssh \| both`，按需启用 | Enable what you need |
 | 轻依赖 | 运行时零 npm 依赖，纯 Node 22 标准库 | Zero runtime deps, pure Node 22 stdlib |
+| 常驻在线 | 一条命令入队，定时唤醒自动抢单，装完即在线 | One-command join, scheduled wake auto-claims tasks |
+
+---
+
+## 快速开始 · Quick Start
+
+**2 条命令，装完即用 / 2 commands, done:**
+
+```sh
+# 1. 安装（含 dsh 本体 + 本插件）
+npm install -g @deepseek-ai/dsh dph-fleet
+
+# 2. 加入舰队（入队码从 hub 获取；自动完成：写配置 + 装插件 + 设自启）
+fleet6 join <入队码 NOFOX-…>
+```
+
+装完即在线：join 自动写配置（0600）、生成插件挂载、**自动安装定时唤醒**（Linux systemd/cron、macOS launchd），机器重启后自动恢复，无需任何手动配置。
+After join, the device is online: config (0600), plugin patch, and **scheduled wake are all installed automatically** (systemd/cron on Linux, launchd on macOS). Survives reboots with zero manual steps.
+
+> 已有 dsh 环境？直接 `dsh plugin add dph-fleet` 或下载 Release 的 tgz 本地安装（`dsh plugin add ./dph-fleet-<version>.tgz`）。
+> Already have dsh? Just `dsh plugin add dph-fleet`, or grab the tgz from Releases.
 
 ---
 
@@ -46,7 +76,7 @@ You should see a clean install with no warnings. Four `fleet_*` tools are then a
 
 ---
 
-## 快速开始 · Quick Start
+## 使用场景 · Usage Scenarios
 
 ### 场景 A：同一局域网（推荐入门）
 ### Scenario A: Same LAN (recommended start)
@@ -162,6 +192,41 @@ fleet8 remove <目标>             # 移除配对 / unpair
 | `fleetHome` | `~/.fleet` | 数据目录（配对表/密钥）/ data dir |
 | `sshUser` / `sshPort` | 当前用户 / 22 | 联动写 SSH 注册表用 |
 | `probeSsh` | `true` | 配对后先探测 SSH 可达再写注册表 |
+
+## 已知限制 · Known Limitations
+
+诚实披露，避免踩坑：
+
+- **mDNS 发现目前为 beta**：大规模组网（>10 台）欢迎反馈；mDNS 组播不跨路由器/子网，跨网设备请用场景 B（SSH 直连）
+- **mDNS 仅同网段**：`fleet_discover` 只能发现同一局域网设备；跨网指挥走 `fleet8 pair`（SSH）
+- **Windows 自启需管理员**：`fleet6 join` 在 Windows 上生成 `install-fleet-wake.bat`，需右键管理员运行一次（schtasks 权限要求）；macOS/Linux 全自动
+- **`fleet7 serve` 的 mDNS 广播**：被控端需保持进程运行才可被发现（`fleet8` SSH 直连不受此限）
+- **Node 22+ 要求**：dph 运行环境需要 Node 22+；CLI 已预编译，npm 安装即用
+
+## 架构 · Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                     dph / dsh                        │
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────┐  │
+│  │ fleet_discover│  │ fleet_ssh_exec│  │ agent_ask │  │  ← 会话内工具（agent 直接调）
+│  │ fleet_pair    │  │ fleet_workspace│  │           │  │
+│  └──────┬───────┘  └──────┬───────┘  └───────────┘  │
+│         │ mDNS            │ SSH                     │
+└─────────┼─────────────────┼─────────────────────────┘
+          ▼                 ▼
+   ┌────────────┐    ┌──────────────┐
+   │ mDNS 模块   │    │ SSH 模块      │
+   │ 同网发现/配对│    │ 跨网直连/执行  │
+   │ 设备身份     │    │ 注册表/密钥池  │
+   └────────────┘    └──────────────┘
+          │                 │
+          └───── 联动 ───────┘   ← mDNS 配对成功自动写入 SSH 注册表
+```
+
+- **纯插件挂载**：不修改 dsh 核心；卸载后不留补丁
+- **数据落点**：设备身份 `~/.dsh/fleet-lan.json`、配对表 `~/.fleet/paired-devices.json`、SSH 注册表 `~/.fleet/ssh-devices.json`、密钥 `~/.fleet/ssh-keys/`（0600）
+- **安全基线**：只连已配对设备；密钥强制 0600；错误返回可读文本不炸会话
 
 ## 常见问题 · FAQ
 
