@@ -15,7 +15,7 @@ interface CapturedTool {
   execute: (args: Record<string, unknown>, exec: { signal: AbortSignal }) => Promise<unknown>;
 }
 
-/** 构造假 ctx：tools.register 捕获定义。 */
+/** 构造假 ctx：tools.register 捕获定义 + inject 桩（/fleet 命令需要）。 */
 function capture(): { ctx: Context; tools: CapturedTool[] } {
   const tools: CapturedTool[] = [];
   const ctx = {
@@ -24,6 +24,9 @@ function capture(): { ctx: Context; tools: CapturedTool[] } {
         tools.push(def);
         return () => {};
       },
+    },
+    inject(_dep: string[], fn: (sub: { commands?: { register(): void } }) => void): void {
+      fn({ commands: { register(): void {} } });
     },
   };
   return { ctx: ctx as unknown as Context, tools };
