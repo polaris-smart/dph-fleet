@@ -13,6 +13,7 @@
     "node": ">=22.18"
   },
   "files": [
+    "dist/",
     "src/",
     "bin/",
     "cordis.patch.yml",
@@ -23,7 +24,9 @@
     "test": "node --test",
     "typecheck": "tsc --noEmit",
     "smoke": "bash smoke.sh",
-    "pack": "npm pack"
+    "pack": "npm pack",
+    "build": "tsc --noCheck -p tsconfig.build.json",
+    "prepack": "npm run build"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "*",
@@ -35,5 +38,8 @@
       "patch": "./cordis.patch.yml"
     }
   },
-  "main": "src/plugin.ts"
+  "main": "src/plugin.ts",
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
 }

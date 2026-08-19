@@ -1,1 +1,3 @@
 dph-fleet-*.tgz
+dist/
+node_modules/

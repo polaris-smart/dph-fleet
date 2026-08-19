@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
-# fleet7 局域网 CLI 壳：Node 22 原生 type stripping 直跑源码，零构建。
-# 解析 symlink 真实路径（npm 安装时 bin 是 symlink，dirname $0 会指向 .bin）。
-# --experimental-strip-types：显式允许 node_modules 内 .ts type stripping。
+# fleet7 局域网 CLI 壳：指向预编译产物 dist（Node 22 下 node_modules 内 .ts 无法 type stripping，故发布带编译）。
 BIN_DIR="$(python3 -c "import os,sys; print(os.path.dirname(os.path.realpath(sys.argv[1])))" "$0")"
-exec node --experimental-strip-types "$BIN_DIR/../src/mdns/cli.ts" "$@"
+exec node "$BIN_DIR/../dist/mdns/cli.js" "$@"
