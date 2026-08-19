@@ -65,26 +65,12 @@ test('modules=ssh 只注册 2 工具（无 mdns 工具）', () => {
   assert.deepEqual(registeredNames({ ...base, modules: 'ssh' }), ['fleet_ssh_exec', 'fleet_workspace']);
 });
 
-test('Config schema 默认 modules=both + 其余默认值', () => {
-  const schema = Config as unknown as {
-    '~standard': { validate(value: unknown): { value?: PluginConfig } };
-  };
-  const out = schema['~standard'].validate({});
-  assert.equal(out.value?.modules, 'both');
-  assert.equal(out.value?.deviceName, '');
-  assert.equal(out.value?.hub, '');
-  assert.equal(out.value?.fleetHome, '');
-  assert.equal(out.value?.sshUser, '');
-  assert.equal(out.value?.sshPort, 22);
-  assert.equal(out.value?.probeSsh, true);
-});
-
-test('Config schema 接受 mdns/ssh 覆盖并拒绝非法 modules', () => {
-  const schema = Config as unknown as {
-    '~standard': { validate(value: unknown): { value?: PluginConfig; issues?: unknown[] } };
-  };
-  assert.equal(schema['~standard'].validate({ modules: 'mdns' }).value?.modules, 'mdns');
-  assert.equal(schema['~standard'].validate({ modules: 'ssh', sshPort: 2222 }).value?.sshPort, 2222);
-  const bad = schema['~standard'].validate({ modules: 'nope' });
-  assert.ok(bad.issues && bad.issues.length > 0);
+test('Config 默认值：modules=both + 其余默认', () => {
+  assert.equal(Config.modules, 'both');
+  assert.equal(Config.deviceName, '');
+  assert.equal(Config.hub, '');
+  assert.equal(Config.fleetHome, '');
+  assert.equal(Config.sshUser, '');
+  assert.equal(Config.sshPort, 22);
+  assert.equal(Config.probeSsh, true);
 });

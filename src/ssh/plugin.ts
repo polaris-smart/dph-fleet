@@ -6,7 +6,6 @@
 // - 注册表路径由 config.fleetHome 覆盖，空则走 FLEET_HOME / ~/.fleet。
 
 import type { Context } from '@deepseek-ai/cordis'
-import { defineTool } from '@deepseek-ai/dsh-tools'
 
 import { loadSshDevices, saveSshDevices, sshDevicesFile, sshSocketsDir } from './config.ts'
 import { assertPaired, touchLastUsed } from './pool.ts'
@@ -46,7 +45,7 @@ export function registerSshTools(ctx: Context, config: SshModuleConfig): void {
     ? { ...process.env, FLEET_HOME: config.fleetHome }
     : process.env;
 
-  ctx.tools.register(defineTool({
+  ctx.tools.register({
     name: 'fleet_ssh_exec',
     description: 'SSH 直连已配对被控设备执行命令（轻量模式，不经 hub）：host 传 deviceId/主机/友好名，command 传远端 shell 命令。只连已配对设备；返回 stdout/stderr/退出码。用于「主控说一句→直连被控干活」。',
     parameters: {
@@ -75,9 +74,9 @@ export function registerSshTools(ctx: Context, config: SshModuleConfig): void {
       saveSshDevices(devicesFile, touchLastUsed(devices, paired.device.deviceId));
       return formatExecResult(result);
     },
-  }))
+  })
 
-  ctx.tools.register(defineTool({
+  ctx.tools.register({
     name: 'fleet_workspace',
     description: '设置/查看已配对被控设备的远程工作区（执行根）。传 dir 则远端 mkdir -p 并记住该目录；不传 dir 则返回当前工作区。任务书（AI 生成）在该工作区执行。',
     parameters: {
@@ -110,5 +109,5 @@ export function registerSshTools(ctx: Context, config: SshModuleConfig): void {
       if ('error' in set) return set.error;
       return `已设置设备 ${set.device.deviceId} 的工作区：${set.device.workspace}`;
     },
-  }))
+  })
 }

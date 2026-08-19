@@ -38,7 +38,7 @@
       "patch": "./cordis.patch.yml"
     }
   },
-  "main": "src/plugin.ts",
+  "main": "dist/plugin.js",
   "devDependencies": {
     "typescript": "^6.0.3"
   }

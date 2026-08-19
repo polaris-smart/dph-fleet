@@ -6,7 +6,6 @@
 // 则把主控 SSH 公钥随配对请求发给被控（被控授权），成功后回调写 SSH 注册表。
 
 import type { Context } from '@deepseek-ai/cordis'
-import { defineTool } from '@deepseek-ai/dsh-tools'
 
 import { ensureIdentity, identityFile, pairedFile } from './identity.ts'
 import { loadPaired, savePaired, upsertPaired, pairWithDevice } from './pair.ts'
@@ -38,7 +37,7 @@ export interface MdnsLink {
  * @param opts - mDNS 模块配置。
  */
 export function registerMdnsTools(ctx: Context, opts: MdnsModuleConfig): void {
-  ctx.tools.register(defineTool({
+  ctx.tools.register({
     name: 'fleet_discover',
     description: '局域网 mDNS 发现同网段所有 fleet 设备（设备名/地址/能力/是否已配对）。返回发现列表；未发现返回「未发现同网 fleet 设备」。',
     parameters: {},
@@ -58,9 +57,9 @@ export function registerMdnsTools(ctx: Context, opts: MdnsModuleConfig): void {
       if (devices.length === 0) return '未发现同网 fleet 设备';
       return devices.map(formatDiscoveredDevice).join('\n');
     },
-  }))
+  })
 
-  ctx.tools.register(defineTool({
+  ctx.tools.register({
     name: 'fleet_pair',
     description: '与同网目标设备密钥配对。target 为目标设备地址（host:port）或 deviceId/设备名；key 为目标设备的设备密钥（fleet-d- 开头）。校验通过即配对成功并存入主控已配对设备表（无需对方应答，无头设备兼容）。',
     parameters: {
@@ -97,5 +96,5 @@ export function registerMdnsTools(ctx: Context, opts: MdnsModuleConfig): void {
       if (opts.link) lines.push(await opts.link.onPaired(result.device));
       return lines.join('\n');
     },
-  }))
+  })
 }

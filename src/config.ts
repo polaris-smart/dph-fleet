@@ -1,7 +1,8 @@
 // dph-fleet v0.2.0 合并配置：modules 开关 + mDNS 模块配置 + SSH 模块配置。
 // 一个插件装下 mDNS（同网发现+密钥配对）与 SSH（跨网直连）两模块，按 modules 开关启用。
-
-import z from '@deepseek-ai/schemastery'
+//
+// 零依赖约定：不依赖 @deepseek-ai/schemastery（dsh 源码运行环境不提供该包），
+// Config 为纯默认值对象，cordis 直接合并（与官方 hello-plugin 同范式）。
 
 /** 模块开关取值。 */
 export type Modules = 'mdns' | 'ssh' | 'both'
@@ -24,13 +25,13 @@ export interface Config {
   probeSsh: boolean;
 }
 
-/** Schemastery 配置 schema：默认 modules=both，其余按各自默认值。 */
-export const Config: z<Config> = z.object({
-  modules: z.union([z.const('mdns'), z.const('ssh'), z.const('both')]).default('both'),
-  deviceName: z.string().default(''),
-  hub: z.string().default(''),
-  fleetHome: z.string().default(''),
-  sshUser: z.string().default(''),
-  sshPort: z.number().default(22),
-  probeSsh: z.boolean().default(true),
-})
+/** 配置默认值（纯对象，cordis 合并用；不依赖 schemastery）。 */
+export const Config: Config = {
+  modules: 'both',
+  deviceName: '',
+  hub: '',
+  fleetHome: '',
+  sshUser: '',
+  sshPort: 22,
+  probeSsh: true,
+}
