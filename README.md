@@ -102,10 +102,13 @@ You should see a clean install with no warnings. Four `fleet_*` tools are then a
 ### 场景 A：同一局域网（推荐入门）
 ### Scenario A: Same LAN (recommended start)
 
-两台设备（下称 A、B）在同一 WiFi/局域网，都完成上面的安装。
-Two devices (A and B) on the same LAN, both installed as above.
+**双方都要装 dph-fleet**（配对是双向的——只有一边装了没法配对）。两台设备（下称 A、B）在同一 WiFi/局域网。
+**Both devices need dph-fleet** (pairing is two-sided). Devices A and B on the same LAN.
 
 **第 1 步 / Step 1**：在 B 上启动广播（让 A 能发现它）/ Start broadcasting on B
+
+B 的用户在 B 的 dph 会话里对 agent 说"启动 fleet 广播"（agent 会跑 `fleet7 serve`），或手动：
+B's user asks B's dph agent to "start fleet broadcast" (agent runs `fleet7 serve`), or manually:
 
 ```sh
 fleet7 serve
