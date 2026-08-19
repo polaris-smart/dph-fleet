@@ -23,27 +23,26 @@
 | 智能体原生 | dph 会话内自动注册工具，agent 直接调 | Tools auto-register for dph agents |
 | 模块开关 | `modules: mdns \| ssh \| both`，按需启用 | Enable what you need |
 | 轻依赖 | 运行时零 npm 依赖，纯 Node 22 标准库 | Zero runtime deps, pure Node 22 stdlib |
-| 常驻在线 | 一条命令入队，定时唤醒自动抢单，装完即在线 | One-command join, scheduled wake auto-claims tasks |
+| 随 dsh 起停 | 装进 profile 即随 dsh 运行，无需独立服务 | Lives with dsh, no separate service |
 
 ---
 
 ## 快速开始 · Quick Start
 
-**2 条命令，装完即用 / 2 commands, done:**
+**一条命令，装完即用 / One command, done:**
 
 ```sh
-# 1. 安装（含 dsh 本体 + 本插件）
-npm install -g @deepseek-ai/dsh dph-fleet
-
-# 2. 加入舰队（入队码从 hub 获取；自动完成：写配置 + 装插件 + 设自启）
-fleet6 join <入队码 NOFOX-…>
+dsh plugin add dph-fleet
 ```
 
-装完即在线：join 自动写配置（0600）、生成插件挂载、**自动安装定时唤醒**（Linux systemd/cron、macOS launchd），机器重启后自动恢复，无需任何手动配置。
-After join, the device is online: config (0600), plugin patch, and **scheduled wake are all installed automatically** (systemd/cron on Linux, launchd on macOS). Survives reboots with zero manual steps.
+装进 dsh profile 后，插件随 dsh 一起运行（`dsh web` / `dsh --profile headless`）——**dsh 在跑，Fleet 就在**；重启 dsh 会话后，会话内自动注册 `fleet_*` 工具，任何 dph 里的 agent 都能直接调用。无需配置系统服务、无需自启脚本。
+Installed into your dsh profile, the plugin lives and dies with dsh (`dsh web` / `dsh --profile headless`) — **dsh running means Fleet running**. After restarting the dsh session, `fleet_*` tools auto-register and any dph-hosted agent can call them. No system services, no cron, no manual setup.
 
-> 已有 dsh 环境？直接 `dsh plugin add dph-fleet` 或下载 Release 的 tgz 本地安装（`dsh plugin add ./dph-fleet-<version>.tgz`）。
-> Already have dsh? Just `dsh plugin add dph-fleet`, or grab the tgz from Releases.
+> 没有 dsh？先装 [DeepSeek Harness](https://github.com/deepseek-ai/dsh)（官方 Coding Agent），再 `dsh plugin add dph-fleet`。
+> No dsh yet? Install [DeepSeek Harness](https://github.com/deepseek-ai/dsh) first, then `dsh plugin add dph-fleet`.
+
+> 也可以下载 Release 的 tgz 本地安装：`dsh plugin add ./dph-fleet-<version>.tgz`。
+> Or grab the tgz from Releases: `dsh plugin add ./dph-fleet-<version>.tgz`.
 
 ---
 
@@ -199,7 +198,6 @@ fleet8 remove <目标>             # 移除配对 / unpair
 
 - **mDNS 发现目前为 beta**：大规模组网（>10 台）欢迎反馈；mDNS 组播不跨路由器/子网，跨网设备请用场景 B（SSH 直连）
 - **mDNS 仅同网段**：`fleet_discover` 只能发现同一局域网设备；跨网指挥走 `fleet8 pair`（SSH）
-- **Windows 自启需管理员**：`fleet6 join` 在 Windows 上生成 `install-fleet-wake.bat`，需右键管理员运行一次（schtasks 权限要求）；macOS/Linux 全自动
 - **`fleet7 serve` 的 mDNS 广播**：被控端需保持进程运行才可被发现（`fleet8` SSH 直连不受此限）
 - **Node 22+ 要求**：dph 运行环境需要 Node 22+；CLI 已预编译，npm 安装即用
 
