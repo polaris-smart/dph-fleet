@@ -3,9 +3,16 @@
 // 子命令：pair / list / ssh / workspace / remove / pubkey。
 // 安全：密钥 0600、只连已配对设备；任何失败 stderr + 非零退出，不崩、不泄露密钥内容。
 
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import crypto from 'node:crypto';
+import { homedir } from 'node:os';
+import { chmodSync } from 'node:fs';
 
-import { loadSshDevices, saveSshDevices, sshDevicesFile, sshKeysDir, sshSocketsDir } from './config.ts';
+/** 一次性邀请码登记文件（主控侧，~/.fleet/invites.json）。 */
+const INVITES_FILENAME = 'invites.json';
+
+import { loadSshDevices, saveSshDevices, sshDevicesFile, sshKeysDir, sshSocketsDir, fleetHome } from './config.ts';
 import { generateSshKey, readPublicKey } from './keys.ts';
 import {
   assertPaired,
@@ -114,6 +121,85 @@ function cmdPair(argv: string[]): void {
     '',
     '下一步：把上面这行公钥追加到被控设备的 ~/.ssh/authorized_keys，然后:',
     `  fleet8 ssh ${deviceId} 'echo ok'`,
+  ].join('\n') + '\n');
+}
+
+/** 生成一次性邀请码（主控侧）：host:port/user/token，登记到 invites.json。 */
+function cmdInvite(argv: string[]): void {
+  const { positionals, opts } = parseArgs(argv);
+  const host = positionals[0] ?? '';
+  if (!host) fail('invite 需要 host 参数（本机对外可达地址）');
+  const port = Number(opts.port ?? '22');
+  if (!Number.isInteger(port) || port < 1 || port > 65535) fail(`非法端口 ${opts.port}`);
+  const user = (opts.user ?? process.env.USER ?? 'root').trim() || 'root';
+  const token = crypto.randomBytes(12).toString('hex');
+  const invitesFile = join(fleetHome(), INVITES_FILENAME);
+  mkdirSync(dirname(invitesFile), { recursive: true });
+  let invites: Record<string, string> = {};
+  try { invites = JSON.parse(readFileSync(invitesFile, 'utf-8')); } catch {}
+  invites[token] = nowIso();
+  writeFileSync(invitesFile, JSON.stringify(invites, null, 2));
+  process.stdout.write([
+    `邀请码已生成（有效期至本机重启/手动清除）：`,
+    ``,
+    `  ${host}:${port}/${user}/${token}`,
+    ``,
+    `把上面这行发给要加入的设备，对方执行：`,
+    `  fleet8 join <这行邀请码>`,
+  ].join('\n') + '\n');
+}
+
+/** 被控侧一条命令入队：解析邀请码 → 配对登记 → 授权引导。 */
+function cmdJoin(argv: string[]): void {
+  const { positionals } = parseArgs(argv);
+  const code = positionals[0] ?? '';
+  if (!code) fail('join 需要邀请码（主控 fleet8 invite 生成）');
+  const m = /^([^:/]+):(\d{1,5})\/([^/]+)\/([a-f0-9]{24})$/.exec(code.trim());
+  if (!m) fail(`邀请码格式不对：${code}（应为 host:port/user/token）`);
+  const host = m[1]!;
+  const port = Number(m[2]);
+  const user = m[3]!;
+  const deviceId = deviceIdFromHost(host, port);
+  const keyPath = join(sshKeysDir(), deviceId);
+  generateSshKey(keyPath, deviceId);
+  const device: SshDevice = {
+    deviceId, name: host, host, port, user, keyPath,
+    workspace: '', addedAt: nowIso(), lastUsedAt: nowIso(),
+  };
+  const next = upsertSshDevice(loadSshDevices(sshDevicesFile()), device);
+  saveSshDevices(sshDevicesFile(), next);
+  process.stdout.write([
+    `✅ 已加入舰队：${host}:${port}（设备 ${deviceId}）`,
+    `私钥: ${keyPath}（0600）`,
+    `公钥: ${readPublicKey(keyPath)}`,
+    ``,
+    `下一步（把公钥发给主控，主控执行）：`,
+    `  fleet8 allow ${deviceId} "<上面这行公钥>"`,
+    `然后即可：fleet8 ssh ${deviceId} 'echo ok'`,
+  ].join('\n') + '\n');
+}
+
+/** 主控授权（allow）：把被控公钥加入本机 authorized_keys，完成入队闭环。 */
+function cmdAllow(argv: string[]): void {
+  const { positionals } = parseArgs(argv);
+  const deviceId = positionals[0] ?? '';
+  const pubkey = positionals[1] ?? '';
+  if (!deviceId || !pubkey) fail('allow 需要 设备ID 和 公钥（fleet8 join 的输出）');
+  if (!pubkey.startsWith('ssh-')) fail('公钥格式不对（应以 ssh- 开头）');
+  const sshDir = join(homedir(), '.ssh');
+  mkdirSync(sshDir, { recursive: true });
+  const authFile = join(sshDir, 'authorized_keys');
+  let existing = '';
+  try { existing = readFileSync(authFile, 'utf-8'); } catch {}
+  if (existing.includes(pubkey)) {
+    process.stdout.write(`✅ ${deviceId} 的公钥已在 authorized_keys 中（无需重复授权）\n`);
+    return;
+  }
+  writeFileSync(authFile, existing.endsWith('\n') || existing === '' ? existing + pubkey + '\n' : existing + '\n' + pubkey + '\n');
+  chmodSync(authFile, 0o600);
+  process.stdout.write([
+    `✅ 已授权 ${deviceId} → ~/.ssh/authorized_keys`,
+    `对方现在可以：fleet8 ssh ${deviceId} 'echo ok'`,
   ].join('\n') + '\n');
 }
 
@@ -252,6 +338,9 @@ async function main(): Promise<void> {
     case 'download': await cmdDownload(rest); return;
     case 'remove': cmdRemove(rest); return;
     case 'pubkey': cmdPubkey(rest); return;
+    case 'invite': cmdInvite(rest); return;
+    case 'allow': cmdAllow(rest); return;
+    case 'join': cmdJoin(rest); return;
     default:
       fail(`未知命令 ${cmd}（见 fleet8 --help）`);
   }
