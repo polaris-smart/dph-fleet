@@ -43,5 +43,5 @@ test('sshKeyPermWarning：权限过宽告警', () => {
 });
 
 test('默认注释常量', () => {
-  assert.equal(DEFAULT_KEY_COMMENT, 'nofox-fleet');
+  assert.equal(DEFAULT_KEY_COMMENT, 'dsh-devices');
 });

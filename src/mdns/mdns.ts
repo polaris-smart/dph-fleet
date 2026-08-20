@@ -4,7 +4,7 @@
 // - 广播层：MdnsResponder 启动即广播（unsolicited response）+ 响应查询 + 周期续播 + TTL=0 goodbye。
 // - 发现层：discoverDevices 发 PTR 查询收集响应，把 PTR/SRV/TXT/A 拼成 DiscoveredDevice[]。
 //
-// 服务类型 `_nofox-fleet._tcp.local`；实例名用设备 id（唯一），友好名/能力放 TXT。
+// 服务类型 `_dsh-devices._tcp.local`；实例名用设备 id（唯一），友好名/能力放 TXT。
 
 import dgram from 'node:dgram';
 import { networkInterfaces } from 'node:os';

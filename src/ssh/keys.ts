@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import type { SshKeyPair } from './types.ts';
 
 /** 密钥注释（落到公钥尾随字段，便于识别）。 */
-export const DEFAULT_KEY_COMMENT = 'nofox-fleet';
+export const DEFAULT_KEY_COMMENT = 'dsh-devices';
 
 /**
  * 生成 ed25519 密钥对（无口令），私钥 chmod 0600、公钥 0644。

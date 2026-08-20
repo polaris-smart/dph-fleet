@@ -2,7 +2,7 @@
 // 骨架单在 UDP/TCP/文件解析边界不引入品牌化转型摩擦（与 M1 REPORT §5 口径一致）。
 
 /** mDNS 服务类型（RFC 6762 实例名后缀）。 */
-export const SERVICE_TYPE = '_nofox-fleet._tcp.local';
+export const SERVICE_TYPE = '_dsh-devices._tcp.local';
 
 /** mDNS 组播地址与端口（RFC 6762）。 */
 export const MDNS_ADDR = '224.0.0.251';

@@ -52,7 +52,7 @@ function info(overrides: Partial<ServiceInfo> = {}): ServiceInfo {
 }
 
 test('encodeName/decodeName 往返一致', () => {
-  const name = '_nofox-fleet._tcp.local';
+  const name = '_dsh-devices._tcp.local';
   const buf = encodeName(name);
   const r = decodeName(buf, 0);
   assert.equal(r.name, name);
@@ -75,7 +75,7 @@ test('sanitizeLabel 把非法字符折叠为 -', () => {
 });
 
 test('instanceNameOf/hostNameOf 由设备 id 推导', () => {
-  assert.equal(instanceNameOf('dev-abcd1234ef5678'), 'dev-abcd1234ef5678._nofox-fleet._tcp.local');
+  assert.equal(instanceNameOf('dev-abcd1234ef5678'), 'dev-abcd1234ef5678._dsh-devices._tcp.local');
   assert.equal(hostNameOf('dev-abcd1234ef5678'), 'dev-abcd1234ef5678.local');
 });
 
