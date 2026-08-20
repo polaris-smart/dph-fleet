@@ -27,8 +27,13 @@ export function sshKeysDir(env: NodeJS.ProcessEnv = process.env): string {
   return join(fleetHome(env), SSH_KEYS_DIRNAME);
 }
 
-/** ControlMaster socket 目录路径。 */
+/**
+ * ControlMaster socket 目录路径。
+ * Windows OpenSSH 不支持 ControlMaster（getsockname failed: Not a socket，实测
+ * Windows Server 2025 + OpenSSH_for_Windows）：返回空串 = 全链路自动关闭连接复用。
+ */
 export function sshSocketsDir(env: NodeJS.ProcessEnv = process.env): string {
+  if (process.platform === 'win32') return '';
   return join(fleetHome(env), SSH_SOCKETS_DIRNAME);
 }
 

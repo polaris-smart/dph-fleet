@@ -257,7 +257,22 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((err: unknown) => {
-  process.stderr.write(`fleet8: ${(err as Error).message}\n`);
-  process.exit(1);
-});
+main()
+  .then(() => {
+    // Windows 实证：CLI 跑完后 Node 不退出（spawn 的 ssh 子进程虽死，stdio 管道
+    // 句柄未被释放，事件循环挂着 → SSH 会话/脚本永远等不到 EOF）。CLI 无长驻
+    // 服务，跑完即显式退出；先等 stdout/stderr 管道 flush 完，否则输出被截断。
+    const done = (): void => process.exit(0);
+    const pending: number[] = [];
+    if (!process.stdout.write('')) pending.push(process.stdout.writableLength);
+    void new Promise<void>((resolve) => {
+      if (process.stdout.writableLength === 0 && process.stderr.writableLength === 0) return resolve();
+      process.stdout.once('drain', resolve);
+      process.stderr.once('drain', resolve);
+      setTimeout(resolve, 100);
+    }).then(done);
+  })
+  .catch((err: unknown) => {
+    process.stderr.write(`fleet8: ${(err as Error).message}\n`);
+    process.exit(1);
+  });

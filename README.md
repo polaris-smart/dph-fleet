@@ -45,6 +45,12 @@ dsh plugin add dsh-devices
 
 ```
 
+## Known Limitations
+
+- **mDNS is LAN-only (beta)**: discovery works on one subnet only; cross-network devices use the SSH route.
+- **mDNS auto-announce** requires the plugin loaded in dsh (it starts automatically).
+- **Windows as a controller**: `fleet_ssh_exec` with `&&` chains may return only the first command's output (OpenSSH for Windows console-session quirk; see TROUBLESHOOTING Q7). Windows as a *managed* device is unaffected.
+
 ## Tools
 
 | Module | Tool | What it does |

@@ -55,6 +55,17 @@ dsh plugin --profile web add dsh-devices@0.2.10
 # 办法二：profile 的 pnpm-workspace.yaml 设 minimumReleaseAge: 0 后 update
 ```
 
+## Q7：Windows 作为主控端时，fleet_ssh_exec 只返回第一条命令的输出（&& 链被截断）
+
+**已知限制**（OpenSSH for Windows 无控制台模式下的会话 bug，非插件缺陷）：Windows 上从 dsh/CLI 发起远程命令时，远端 shell 的多条输出（如 `hostname && echo b`）可能只回传第一条。裸 cmd 里跑 ssh 正常，node spawn（无控制台）会截断。
+
+**Workaround**：
+- 单条命令执行（每条一个 `fleet_ssh_exec`），或用 `;` 连接的单行
+- 需要复合逻辑时，把命令写成远端脚本文件再执行
+- Windows 作为**被控端**（被 Mac/Linux/HK 指挥）不受此限制
+
+> 追踪：OpenSSH for Windows console 会话 issue。
+
 ## 数据落点（排查时看哪里）
 
 | 数据 | 位置 |

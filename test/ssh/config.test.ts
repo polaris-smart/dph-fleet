@@ -88,3 +88,16 @@ test('sshDevicesPermWarning：权限过宽告警', () => {
   writeFileSync(file, '[]', { mode: 0o644 });
   assert.match(sshDevicesPermWarning(file), /权限过宽/);
 });
+
+// --- Windows ControlMaster 禁用（v0.1.0 Windows 实测发现的坑）---
+
+test('sshSocketsDir：win32 返回空串（Windows OpenSSH 不支持 ControlMaster）', () => {
+  const original = process.platform;
+  Object.defineProperty(process, 'platform', { value: 'win32' });
+  try {
+    const dir = sshSocketsDir();
+    assert.equal(dir, '', 'Windows 上必须返回空串以禁用连接复用');
+  } finally {
+    Object.defineProperty(process, 'platform', { value: original });
+  }
+});

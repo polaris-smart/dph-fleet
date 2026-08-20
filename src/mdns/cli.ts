@@ -227,7 +227,12 @@ async function main(): Promise<void> {
   }
 }
 
-void main().catch((err: unknown) => {
-  console.error(`fleet7 失败：${err instanceof Error ? err.message : String(err)}`);
-  process.exit(1);
-});
+void main()
+  .then(() => {
+    // Windows 实证：CLI 跑完后 Node 不退出（stdio 管道句柄未释放），显式退出。
+    process.exit(0);
+  })
+  .catch((err: unknown) => {
+    console.error(`fleet7 失败：${err instanceof Error ? err.message : String(err)}`);
+    process.exit(1);
+  });

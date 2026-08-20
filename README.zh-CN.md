@@ -260,7 +260,8 @@ fleet8 remove <目标>             # 移除配对 / unpair
 
 - **mDNS 发现目前为 beta**：大规模组网（>10 台）欢迎反馈；mDNS 组播不跨路由器/子网，跨网设备请用场景 B（SSH 直连）
 - **mDNS 仅同网段**：`fleet_discover` 只能发现同一局域网设备；跨网指挥走 `fleet8 pair`（SSH）
-- **`fleet7 serve` 的 mDNS 广播**：被控端需保持进程运行才可被发现（`fleet8` SSH 直连不受此限）
+- **`fleet7 serve` 的 mDNS 广播**：被控端需保持进程运行才可
+- **Windows 作主控端的 ssh 执行**：`fleet_ssh_exec` 的 `&&` 多命令链可能只回传首条（OpenSSH for Windows 无控制台会话 bug，见 TROUBLESHOOTING Q7）；Windows 作被控端不受影响被发现（`fleet8` SSH 直连不受此限）
 - **Node 22+ 要求**：dsh 运行环境需要 Node 22+；CLI 已预编译，npm 安装即用
 
 ## 架构 · Architecture

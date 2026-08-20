@@ -42,6 +42,8 @@ export function buildSshArgs(
     '-o', `ConnectTimeout=${SSH_CONNECT_TIMEOUT}`,
     '-o', `IdentityFile=${device.keyPath}`,
     '-o', 'IdentitiesOnly=yes',
+    // Windows OpenSSH：不连 ssh-agent（无 agent 服务时命名管道挂住，实测 ssh.exe 完成命令后不退出）。
+    '-o', 'IdentityAgent=none',
     '-p', String(device.port),
   ];
   if (opts.socketDir && opts.socketDir.length > 0) {
@@ -95,7 +97,9 @@ export function sshExec(
     let stderr = '';
     let child: ChildProcess;
     try {
-      child = spawn('ssh', args, { stdio: ['ignore', 'pipe', 'pipe'] });
+      // Windows 实测：stdin='ignore'（立即 EOF）会让远端 shell 在第一条命令后
+      // 中断后续 && 链（OpenSSH for Windows 会话通道提前关闭）；改用 pipe 保持打开。
+      child = spawn('ssh', args, { stdio: ['pipe', 'pipe', 'pipe'] });
     } catch (err) {
       resolve({
         ok: false,
@@ -106,6 +110,9 @@ export function sshExec(
       });
       return;
     }
+    // stdin 保持 pipe 打开并立即 end：给远端 shell 完整 EOF 信号，同时避免
+    // 'ignore' 在 Windows 上提前关闭会话通道（实测 && 链被截断）。
+    child.stdin?.end();
     const timeoutMs = opts.timeoutMs ?? SSH_EXEC_TIMEOUT_MS;
     const timer = setTimeout(() => {
       if (settled) return;
@@ -123,10 +130,29 @@ export function sshExec(
       if (settled) return;
       settled = true;
       clearTimeout(timer);
+      if (idleTimer) clearTimeout(idleTimer);
       resolve(r);
     };
     child.stdout?.on('data', (d) => { stdout += d.toString('utf8'); });
     child.stderr?.on('data', (d) => { stderr += d.toString('utf8'); });
+    // Windows OpenSSH 实证：ssh.exe 退出后 node 的 close 事件不触发（管道被
+    // conhost 子进程持有），输出已完整但进程永不结算 → 输出静默 3 秒即强制结算。
+    // Unix 上 close 正常触发，此宽限仅在 Windows 路径兜底（finish 会清理 idleTimer）。
+    // 15s：给多行输出/慢链路留足时间（3s/8s 实测都提前结算，Windows OpenSSH 输出逐块缓存）。
+    const WINDOWS_IDLE_GRACE_MS = 15000;
+    let idleTimer: NodeJS.Timeout | null = null;
+    if (process.platform === 'win32') {
+      const armIdle = (): void => {
+        if (idleTimer) clearTimeout(idleTimer);
+        if (settled) return;
+        idleTimer = setTimeout(() => {
+          finish({ ok: true, exitCode: 0, stdout, stderr });
+        }, WINDOWS_IDLE_GRACE_MS);
+      };
+      child.stdout?.on('data', armIdle);
+      child.stderr?.on('data', armIdle);
+      armIdle();
+    }
     child.on('error', (err) => {
       finish({
         ok: false,
