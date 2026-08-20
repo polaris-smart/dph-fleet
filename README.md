@@ -369,6 +369,13 @@ Found a bug or have an idea?
 **v0.2.0**（2026-08-18）
 - 去中心化转向：mDNS 同网发现 + 密钥配对 + SSH 跨网直连，单插件交付
 
+## 贡献者 · Contributors
+
+- **[polaris-smart](https://github.com/polaris-smart)** — 设计与实现 Design & implementation
+- **[getaba](https://github.com/getaba)** — 首批试用与真实跨网场景共创（Windows/HK 服务器）Early adoption & real cross-network co-creation
+
+> 🌟 用得顺手就点个 Star · Star it if it fits your fleet.
+
 ## 许可证 · License
 
 MIT © polaris-smart
