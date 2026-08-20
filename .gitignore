@@ -1,3 +1,4 @@
-dph-fleet-*.tgz
+dsh-devices-*.tgz
+*.tgz
 dist/
 node_modules/
