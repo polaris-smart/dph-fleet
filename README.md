@@ -1,8 +1,8 @@
-# dph-fleet
+# dsh-devices
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/dph-fleet"><img alt="npm" src="https://img.shields.io/npm/v/dph-fleet?style=flat-square&color=4b6fff"></a>
-  <a href="https://github.com/polaris-smart/dph-fleet"><img alt="GitHub stars" src="https://img.shields.io/github/stars/polaris-smart/dph-fleet?style=flat-square&color=4b6fff"></a>
+  <a href="https://www.npmjs.com/package/dsh-devices"><img alt="npm" src="https://img.shields.io/npm/v/dsh-devices?style=flat-square&color=4b6fff"></a>
+  <a href="https://github.com/polaris-smart/dsh-devices"><img alt="GitHub stars" src="https://img.shields.io/github/stars/polaris-smart/dsh-devices?style=flat-square&color=4b6fff"></a>
   <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-263146?style=flat-square"></a>
   <img alt="Platform" src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-7da1de?style=flat-square">
 </p>
@@ -16,10 +16,10 @@
 **Zero core changes, pure plugin mounting.** A dph plugin that lets your devices collaborate. Tools auto-register in dph sessions — **any dph-hosted agent can call them directly**. Uninstall leaves no core patches.
 
 > **适用前提 / Requirements**：
-> **① 至少 2 台设备都装 dph-fleet**（配对是双向的——只有一台装了没法配对，单设备装了没有配对对象）。
+> **① 至少 2 台设备都装 dsh-devices**（配对是双向的——只有一台装了没法配对，单设备装了没有配对对象）。
 > **② 连接方式二选一**：同一局域网且放行 mDNS 广播（UDP 5353，组播不跨路由器/子网）；或公网可达设备（有公网 IP 或端口映射）且开通 SSH（22 端口）。**NAT 内网设备之间**（如两台都在家庭/办公路由器后面）当前版本**无法直连**——需要 V2（P2P/tailscale 路线）。
 >
-> **Requirements**: ① **At least 2 devices, each with dph-fleet installed** (pairing is two-sided; a single device has nothing to pair with). ② Connectivity: same LAN with mDNS multicast allowed (UDP 5353; doesn't cross routers/subnets), **or** publicly reachable devices with SSH (port 22) open. NAT-isolated devices cannot connect to each other in this version (V2 = P2P/tailscale planned).
+> **Requirements**: ① **At least 2 devices, each with dsh-devices installed** (pairing is two-sided; a single device has nothing to pair with). ② Connectivity: same LAN with mDNS multicast allowed (UDP 5353; doesn't cross routers/subnets), **or** publicly reachable devices with SSH (port 22) open. NAT-isolated devices cannot connect to each other in this version (V2 = P2P/tailscale planned).
 
 | | 中文 | English |
 |---|---|---|
@@ -54,7 +54,7 @@ npm install -g @deepseek-ai/dsh
 
 **第 2 步：两台设备都装 Fleet**（配对是双向的，单台没用）/ Install Fleet on **both** devices:
 ```sh
-dsh plugin add dph-fleet
+dsh plugin add dsh-devices
 ```
 
 **第 3 步：重启 dsh 会话**（让插件加载）/ Restart the dsh session:
@@ -81,8 +81,8 @@ agent：备份完成，输出：…
 **不需要记命令**——发现设备、配对、执行，都是 agent 在会话里调 `fleet_discover` / `fleet_pair` / `fleet_ssh_exec` 完成的。
 No commands to memorize — discovery, pairing, and execution are all done by the agent calling `fleet_discover` / `fleet_pair` / `fleet_ssh_exec` in your session.
 
-> 也可以下载 Release 的 tgz 本地安装：`dsh plugin add ./dph-fleet-<version>.tgz`。
-> Or grab the tgz from Releases: `dsh plugin add ./dph-fleet-<version>.tgz`.
+> 也可以下载 Release 的 tgz 本地安装：`dsh plugin add ./dsh-devices-<version>.tgz`。
+> Or grab the tgz from Releases: `dsh plugin add ./dsh-devices-<version>.tgz`.
 
 ---
 
@@ -98,10 +98,10 @@ node --version   # 需要 Node 22+（dph 运行要求）
 
 ```sh
 # 一条命令（npm 源）/ One command from npm:
-dsh plugin add dph-fleet
+dsh plugin add dsh-devices
 
 # 或从 GitHub Releases 下载 tgz / Or install a release tgz:
-dsh plugin add ./dph-fleet-<version>.tgz
+dsh plugin add ./dsh-devices-<version>.tgz
 ```
 
 看到安装成功且无 warning 即可。装完 dph 会话内自动注册 4 个 `fleet_*` 工具。
@@ -109,8 +109,8 @@ You should see a clean install with no warnings. Four `fleet_*` tools are then a
 
 > 从源码打包 / Build from source:
 > ```sh
-> git clone https://github.com/polaris-smart/dph-fleet.git
-> cd dph-fleet && npm pack   # 产出 dph-fleet-<version>.tgz
+> git clone https://github.com/polaris-smart/dsh-devices.git
+> cd dsh-devices && npm pack   # 产出 dsh-devices-<version>.tgz
 > ```
 
 ---
@@ -120,8 +120,8 @@ You should see a clean install with no warnings. Four `fleet_*` tools are then a
 ### 场景 A：同一局域网（推荐入门）
 ### Scenario A: Same LAN (recommended start)
 
-**双方都要装 dph-fleet**（配对是双向的——只有一边装了没法配对）。两台设备（下称 A、B）在同一 WiFi/局域网。
-**Both devices need dph-fleet** (pairing is two-sided). Devices A and B on the same LAN.
+**双方都要装 dsh-devices**（配对是双向的——只有一边装了没法配对）。两台设备（下称 A、B）在同一 WiFi/局域网。
+**Both devices need dsh-devices** (pairing is two-sided). Devices A and B on the same LAN.
 
 **第 1 步 / Step 1**：在 B 上启动广播（让 A 能发现它）/ Start broadcasting on B
 
@@ -307,8 +307,8 @@ A: You likely have an outdated package — download the latest tgz from the Rele
 A: After restarting the dsh session, type `/fleet` — seeing your device identity and paired devices means it works. Or ask the agent to call `fleet_discover`.
 
 **Q: 装了但会话里没有 `fleet_*` 工具？**
-确认三件事：① `dsh plugin add dph-fleet` 装到了你正在用的 profile（`dsh plugin --profile <name> add dph-fleet`）② 会话已重启 ③ dsh 版本为 Node 22+（`node --version`）。都满足仍没有，把 `dsh plugin` 输出发 Issue。
-A: Check: ① the plugin was added to the profile you're booting (`dsh plugin --profile <name> add dph-fleet`) ② the session was restarted ③ Node 22+ (`node --version`). Still missing? Open an issue with the `dsh plugin` output.
+确认三件事：① `dsh plugin add dsh-devices` 装到了你正在用的 profile（`dsh plugin --profile <name> add dsh-devices`）② 会话已重启 ③ dsh 版本为 Node 22+（`node --version`）。都满足仍没有，把 `dsh plugin` 输出发 Issue。
+A: Check: ① the plugin was added to the profile you're booting (`dsh plugin --profile <name> add dsh-devices`) ② the session was restarted ③ Node 22+ (`node --version`). Still missing? Open an issue with the `dsh plugin` output.
 
 **Q: `fleet_ssh_exec` 连接超时？**
 先确认对端 22 端口可达（`nc -vz <ip> 22` 或 `fleet8 ssh <name> hostname`）；确认对端公钥已进 `authorized_keys`；超时通常是网络/防火墙问题，不是插件问题。
@@ -363,7 +363,7 @@ Found a bug or have an idea?
 - 不影响 dph 会话工具（cordis 加载，原本正常）
 
 **v0.2.4**（2026-08-17）
-- 发布到 npm：一条命令 `dsh plugin add dph-fleet` 安装
+- 发布到 npm：一条命令 `dsh plugin add dsh-devices` 安装
 - mDNS + SSH 两模块合一，`modules: mdns | ssh | both` 开关
 
 **v0.2.0**（2026-08-18）

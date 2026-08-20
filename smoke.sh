@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# dph-fleet v0.2.0 端到端冒烟（FLEET-V02-MERGE）：
+# dsh-devices v0.2.0 端到端冒烟（FLEET-V02-MERGE）：
 #   1. tsc 0 error + 单测全绿
 #   2. 三态工具数断言（both=4 / mdns=2 / ssh=2；关掉的模块工具不注册）
 #   3. 本机双进程 mDNS 发现 + 输 key 配对（复用 v0.1 冒烟姿势）
@@ -131,4 +131,4 @@ echo "  ✓ 联动真跑：mDNS 配对后 SSH 直连执行 echo 成功"
 
 echo
 echo "=============================================="
-echo "dph-fleet v0.2.0 冒烟全绿：三态工具注册 + 发现配对 + 联动写注册表 + ssh_exec 真连 + 关模块不注册 + tsc 0 error"
+echo "dsh-devices v0.2.0 冒烟全绿：三态工具注册 + 发现配对 + 联动写注册表 + ssh_exec 真连 + 关模块不注册 + tsc 0 error"

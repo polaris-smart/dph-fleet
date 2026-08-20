@@ -1,4 +1,4 @@
-// dph-fleet mDNS 模块工具面：注册 fleet_discover / fleet_pair 两个工具。
+// dsh-devices mDNS 模块工具面：注册 fleet_discover / fleet_pair 两个工具。
 // 只做工具门面，核心逻辑在 mdns/pair/server/discover；「按模块开关注册」由根插件
 // dispatch 决定是否调用 registerMdnsTools（关掉 mdns 时这两个工具不注册）。
 //

@@ -1,4 +1,4 @@
-// dph-fleet v0.2.0 合并配置：modules 开关 + mDNS 模块配置 + SSH 模块配置。
+// dsh-devices v0.2.0 合并配置：modules 开关 + mDNS 模块配置 + SSH 模块配置。
 // 一个插件装下 mDNS（同网发现+密钥配对）与 SSH（跨网直连）两模块，按 modules 开关启用。
 //
 // 零依赖约定：不依赖 @deepseek-ai/schemastery（dsh 运行环境不保证提供该包）。
@@ -94,7 +94,7 @@ export const Config: Config & StandardSchemaV1<Config> = {
   probeSsh: true,
   '~standard': {
     version: 1,
-    vendor: 'dph-fleet',
+    vendor: 'dsh-devices',
     validate,
   },
 }

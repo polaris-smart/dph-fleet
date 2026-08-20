@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// fleet7 局域网 CLI（dph-fleet mDNS 模块）：keygen / serve / discover / pair / paired。
+// fleet7 局域网 CLI（dsh-devices mDNS 模块）：keygen / serve / discover / pair / paired。
 // 纯 Node 标准库 + type stripping 直跑源码，零构建。核心逻辑在 mdns/pair/server/identity。
 // pair 命令默认做合一联动（配对成功写 SSH 注册表），--no-link 可关。
 
@@ -189,7 +189,7 @@ function cmdPaired(): void {
 }
 
 function usage(): void {
-  console.error(`fleet7 — dph-fleet 局域网 CLI（mDNS 发现 + 密钥配对）
+  console.error(`fleet7 — dsh-devices 局域网 CLI（mDNS 发现 + 密钥配对）
 
 用法：
   fleet7 keygen [--name 设备名] [--hub <url>]

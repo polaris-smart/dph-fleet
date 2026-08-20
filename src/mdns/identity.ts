@@ -9,7 +9,7 @@ import { generateDeviceId, generateDeviceKey, isDeviceKey } from './key.ts';
 import type { DeviceCapabilities, DeviceIdentity } from './types.ts';
 
 /** 插件自身版本（作为 dph 版本自报）。与 package.json version 对齐。 */
-export const DPH_VERSION = 'dph-fleet@0.2.0';
+export const DPH_VERSION = 'dsh-devices@0.2.0';
 
 /** 设备身份文件名（DSH_HOME 下，与 M2 fleet.json 并列）。 */
 export const IDENTITY_FILENAME = 'fleet-lan.json';

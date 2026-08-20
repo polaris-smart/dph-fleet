@@ -1,4 +1,4 @@
-// dph-fleet v0.2.0 单插件（mDNS + SSH 合一，FLEET-V02-MERGE）。
+// dsh-devices v0.2.0 单插件（mDNS + SSH 合一，FLEET-V02-MERGE）。
 // 一个插件装两模块，按 config.modules 开关注册工具：
 //   - mdns 开 → fleet_discover / fleet_pair
 //   - ssh  开 → fleet_ssh_exec / fleet_workspace
@@ -19,7 +19,7 @@ import type { LinkContext } from './link.ts'
 import type { PairedDevice } from './mdns/types.ts'
 
 /** 稳定的 Cordis 插件名。 */
-export const name = 'dph-fleet'
+export const name = 'dsh-devices'
 
 /** 需要的服务：工具注册表。 */
 export const inject = ['tools']

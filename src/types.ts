@@ -1,4 +1,4 @@
-// dph-fleet 零依赖类型声明：不依赖 @deepseek-ai/dsh-tools / schemastery，
+// dsh-devices 零依赖类型声明：不依赖 @deepseek-ai/dsh-tools / schemastery，
 // 自行声明 dsh 注入的服务（tools/commands）与工具注册的类型面。
 // 运行时由 dsh 提供（cordis 动态注入），这里只为 tsc 提供类型。
 

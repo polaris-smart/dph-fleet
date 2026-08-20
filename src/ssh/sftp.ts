@@ -1,4 +1,4 @@
-// dph-fleet SFTP 文件传输：沿已配对设备的 SSH 通道传文件（上传/下载）。
+// dsh-devices SFTP 文件传输：沿已配对设备的 SSH 通道传文件（上传/下载）。
 // 用系统 scp（SSH 自带的文件传输，走同一配对密钥 + ControlMaster 复用），
 // 不引入新依赖。安全：BatchMode 禁交互、IdentitiesOnly 只试配对私钥、密钥走 -i 不落日志。
 //

@@ -1,4 +1,4 @@
-// dph-fleet /fleet 斜杠命令：装完即用的"门"。
+// dsh-devices /fleet 斜杠命令：装完即用的"门"。
 // 用户在 dsh UI 敲 /fleet 即显示本机状态 + 已配对设备 + 使用帮助（不依赖模型工具调用）。
 // 这是解决"装完不知道下一步做什么"的关键入口。
 // 子命令真执行（handler 支持 Promise<CommandResult>，官方契约 index.ts:68）：
@@ -44,7 +44,7 @@ function statusView(): { kind: 'success'; text: string } {
   return {
     kind: 'success' as const,
     text: [
-      `📡 dph-fleet（数据目录 ${home}）`,
+      `📡 dsh-devices（数据目录 ${home}）`,
       idLine,
       '',
       '🔗 mDNS 已配对设备：',
@@ -67,7 +67,7 @@ function helpView(): { kind: 'success'; text: string } {
   return {
     kind: 'success' as const,
     text: [
-      '📡 dph-fleet 可用命令：',
+      '📡 dsh-devices 可用命令：',
       '  /fleet                        → 状态（本机身份 + 已配对设备）',
       '  /fleet discover               → 扫描同网 fleet 设备（mDNS）',
       '  /fleet pair <host:port> <key> → 密钥配对（key 在对方 fleet7 serve 启动时打印）',
@@ -86,7 +86,7 @@ async function discoverCmd(): Promise<{ kind: 'success'; text: string }> {
   if (devices.length === 0) {
     return {
       kind: 'success' as const,
-      text: '未发现同网 fleet 设备。确认对方也装了 dph-fleet 且在运行；跨网设备请走 /fleet ssh 路线（见 /fleet help）。',
+      text: '未发现同网 fleet 设备。确认对方也装了 dsh-devices 且在运行；跨网设备请走 /fleet ssh 路线（见 /fleet help）。',
     };
   }
   return { kind: 'success' as const, text: devices.map(formatDiscoveredDevice).join('\n') };
@@ -169,7 +169,7 @@ export function registerFleetCommand(ctx: FleetContext): void {
   ctx.inject(['commands'], (commandCtx) => {
     (commandCtx as unknown as { commands?: { register(cmd: unknown): void } }).commands?.register({
       name: 'fleet',
-      description: 'dph-fleet：查看组网状态 / 发现设备 / 配对 / 远程执行',
+      description: 'dsh-devices：查看组网状态 / 发现设备 / 配对 / 远程执行',
       input: { hint: '[status | discover | pair <addr> <key> | ssh <target> <cmd>]' },
       handler: ({ rawInput }: { rawInput: string }): Promise<{ kind: 'success' | 'error'; text: string }> => {
         const args = rawInput.trim();

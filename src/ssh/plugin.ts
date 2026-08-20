@@ -1,4 +1,4 @@
-// dph-fleet SSH 模块工具面：注册 fleet_ssh_exec / fleet_workspace 两个工具（纯 SSH，不经 hub）。
+// dsh-devices SSH 模块工具面：注册 fleet_ssh_exec / fleet_workspace 两个工具（纯 SSH，不经 hub）。
 // 「按模块开关注册」由根插件 dispatch 决定是否调用 registerSshTools（关掉 ssh 时这两个工具不注册）。
 //
 // 机制（与 fleet-m8-ssh 同口径）：

@@ -31,7 +31,7 @@ function envFor(fleetHome: string): NodeJS.ProcessEnv {
 /** 取（必要时生成）主控 SSH 密钥，返回私钥路径与公钥文本。 */
 export function masterSshKey(ctx: LinkContext): { keyPath: string; publicKey: string } {
   const keyPath = join(sshKeysDir(envFor(ctx.fleetHome)), MASTER_KEY_ID);
-  if (!keyFileExists(keyPath)) generateSshKey(keyPath, 'dph-fleet');
+  if (!keyFileExists(keyPath)) generateSshKey(keyPath, 'dsh-devices');
   return { keyPath, publicKey: readPublicKey(keyPath) };
 }
 

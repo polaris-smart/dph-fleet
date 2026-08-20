@@ -19,7 +19,7 @@ function pairedDevice(over: Partial<PairedDevice> = {}): PairedDevice {
     address: '127.0.0.1',
     port: 34567,
     hub: '',
-    capabilities: { os: 'linux x64', node: 'v22.23.2', memoryMb: 8192, dph: true, dphVersion: 'dph-fleet@0.2.0' },
+    capabilities: { os: 'linux x64', node: 'v22.23.2', memoryMb: 8192, dph: true, dphVersion: 'dsh-devices@0.2.0' },
     keySha256: 'x'.repeat(64),
     pairedAt: '2026-08-18T00:00:00.000Z',
     lastSeen: '2026-08-18T00:00:00.000Z',
