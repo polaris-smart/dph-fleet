@@ -207,6 +207,18 @@ Then use `fleet_ssh_exec` / `fleet_workspace` in dph sessions.
 关掉的模块工具不注册：`modules=mdns` 只有前两个，`modules=ssh` 只有后两个，`both` 全开。
 Disabled modules don't register their tools.
 
+**`/fleet` 斜杠命令（装完即用）/ The `/fleet` slash command**：重启 dsh 后在输入框敲 `/fleet`——不经过模型、不花 token，直接真执行：
+
+| 命令 | 作用 | Effect |
+|---|---|---|
+| `/fleet` | 状态：本机身份 + 已配对设备 + 下一步 | Status: identity + paired devices |
+| `/fleet discover` | 真扫描同网设备（mDNS） | Actually scan the LAN |
+| `/fleet pair <host:port> <key>` | 真配对（密钥校验 + 写配对表） | Actually pair with the device key |
+| `/fleet ssh <target> <命令>` | 真直连执行（仅已配对设备） | Actually exec over SSH |
+
+错误有具体指引（如"设备未配对 → 先 /fleet pair"）；文件传输与工作区请让 AI 调 `fleet_upload` 等工具。
+Errors carry next-step guidance; file transfer & workspace go through the agent tools.
+
 **智能体直接调用 / Call from any dph agent**：装完插件，在你的 dph 会话里对 AI 说一句"调用 `fleet_discover`"即可发现设备；配合同网另一台设备的密钥后即可用 `fleet_ssh_exec` 指挥它。无需额外配置——工具注册给 dph 会话内的所有 agent（hermes、zcode 等）。
 After install, just say "call `fleet_discover`" in your dph session to see LAN devices; pair once, then command remote devices with `fleet_ssh_exec`. No extra config — tools are exposed to every agent in the dph session.
 
@@ -275,6 +287,9 @@ fleet8 remove <目标>             # 移除配对 / unpair
 
 ## 常见问题 · FAQ
 
+> 更完整的排障（安装失败/发现不到/SSH 不通/npm 装旧版）见 [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)。
+> For full troubleshooting see [TROUBLESHOOTING.md](./TROUBLESHOOTING.md).
+
 **Q: `fleet_discover` 找不到设备？**
 确认：两台在同一局域网（mDNS 组播不跨路由器）；被控端在跑 `fleet7 serve`；防火墙放行 UDP 5353。
 A: Both devices must be on the same LAN (mDNS multicast doesn't cross routers); the target must run `fleet7 serve`; allow UDP 5353 through firewalls.
@@ -318,6 +333,7 @@ Found a bug or have an idea?
 ## 更新日志 · Changelog
 
 **v0.2.10**（2026-08-20）
+- ✨ `/fleet` 斜杠命令真执行化：discover 真扫描 / pair 真配对 / ssh 真直连（此前仅打印提示）；错误提示带下一步指引
 - ✨ 新增 SFTP 文件传输：`fleet_upload` / `fleet_download`（沿已配对设备的 SSH 通道传文件，数据/文件可双向打通）
 - 🔧 零依赖化完成：去除对 dsh-tools/schemastery 的运行时与声明依赖，任何 dsh 环境（源码或 npm 安装）都能 `dsh plugin add` 直接安装
 - 🔧 插件入口指向预编译产物（dist/plugin.js），安装即用，无需构建

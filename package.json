@@ -28,6 +28,7 @@
     "dist/",
     "src/",
     "cordis.patch.yml",
+    "TROUBLESHOOTING.md",
     "README.md",
     "tsconfig.json"
   ],
