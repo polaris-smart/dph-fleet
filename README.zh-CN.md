@@ -254,6 +254,32 @@ fleet8 remove <目标>             # 移除配对 / unpair
 | `sshUser` / `sshPort` | 当前用户 / 22 | 联动写 SSH 注册表用 |
 | `probeSsh` | `true` | 配对后先探测 SSH 可达再写注册表 |
 
+## 各平台注意事项 · Platform Notes
+
+> 以下均为**真实平台验证过的注意事项**（macOS / Ubuntu 20.04+ / Windows Server 2025 与 Windows 11 实测），不是纸面推测。
+
+### macOS
+- **mDNS 自动应答**：插件加载即自动广播，无需手动 `fleet7 serve`；若发现同网发现不到设备，检查系统防火墙是否放行 UDP 5353
+- **SSH 服务**：macOS 默认**未开启远程登录**（SSH 服务端）。要让别的设备指挥本机，需先在 系统设置 → 通用 → 共享 → 打开「远程登录」
+- **密钥权限**：`~/.fleet/ssh-keys/` 密钥自动 0600；如手动拷贝过，确保权限不被放宽（`chmod 600`）
+
+### Linux（含 Ubuntu / 云服务器）
+- **Node 版本**：dsh 官方要求 **Node ≥ 22.19**（22.14 及以下缺 zstd API，boot 会报 `createZstdDecompress`）；用 `nvm` 或发行版源装新版
+- **被控端 SSH**：服务器一般自带 sshd；确认 `systemctl status sshd` 在跑、`~/.ssh/authorized_keys` 权限 600、`~/.ssh` 权限 700
+- **云厂商安全组**：云服务器（腾讯云/阿里云等）记得在安全组放行 SSH 端口（默认 22），否则公网配对能建立但执行超时
+- **小水管环境**：网络带宽小时，`npx` 拉 dsh 可能很慢——建议 `npm config set registry https://registry.npmmirror.com` 加速
+
+### Windows（桌面版 10/11 与 Server 2016+）
+- **Node 版本**：同样要 **≥ 22.19**（zip 绿色版最稳——MSI 静默安装在 2G 小内存机上可能假成功）
+- **被控端（被别人指挥）**：需手动开启 OpenSSH Server：设置 → 系统 → 可选功能 → 添加「OpenSSH 服务器」，然后
+  ```powershell
+  Start-Service sshd; Set-Service sshd -StartupType Automatic
+  ```
+  并在防火墙放行 22（`New-NetFirewallRule ... -LocalPort 22`）
+- **主控端（指挥别人）**：`fleet_ssh_exec` 的单条命令、`fleet8 ssh`、上传/下载全部正常；**`&&` 多命令链可能只回传首条输出**（OpenSSH for Windows 无控制台会话限制，见 TROUBLESHOOTING Q7）——需要复合命令时请分多条执行
+- **CLI 退出**：`fleet7/fleet8` 命令在 Windows 上执行完会正常退出（我们显式处理了管道句柄问题），无需额外操作
+
+---
 ## 已知限制 · Known Limitations
 
 诚实披露，避免踩坑：

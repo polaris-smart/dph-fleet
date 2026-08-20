@@ -45,6 +45,31 @@ dsh plugin add dsh-devices
 
 ```
 
+## Platform Notes
+
+> Verified on real hardware: macOS / Ubuntu 22.04+ / Windows Server 2025 & Windows 11.
+
+### macOS
+- mDNS auto-announce starts with the plugin (no manual `fleet7 serve`); if discovery fails, allow UDP 5353 in the firewall.
+- Remote login (SSH server) is **off by default** — enable it in System Settings → General → Sharing → Remote Login for other devices to command this machine.
+- Fleet keys live in `~/.fleet/ssh-keys/` (0600 enforced).
+
+### Linux (incl. Ubuntu / cloud servers)
+- **Node ≥ 22.19 required** (22.14 and below lack the zstd API → `createZstdDecompress` boot error). Upgrade via nvm or the distro.
+- As a managed host: `sshd` running, `authorized_keys` 600, `~/.ssh` 700.
+- Cloud security groups must allow SSH (22), or public pairing will time out.
+- Slow networks: use `npm config set registry https://registry.npmmirror.com` to speed up dsh installs.
+
+### Windows (10/11 desktop and Server 2016+)
+- **Node ≥ 22.19 required** — the zip build is most reliable (MSI silent install can silently fail on low-memory VMs).
+- As a managed host: install OpenSSH Server (Settings → Optional features), then:
+  ```powershell
+  Start-Service sshd; Set-Service sshd -StartupType Automatic
+  ```
+  Allow port 22 through the firewall.
+- As a controller: single commands, `fleet8 ssh`, upload/download all work; **`&&` chains may return only the first command's output** (OpenSSH for Windows console limitation — see TROUBLESHOOTING Q7). Split compound commands.
+- `fleet7`/`fleet8` exit cleanly on Windows (pipe-handle handling is explicit).
+
 ## Known Limitations
 
 - **mDNS is LAN-only (beta)**: discovery works on one subnet only; cross-network devices use the SSH route.
