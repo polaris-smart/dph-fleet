@@ -2,7 +2,7 @@
   "name": "dsh-devices",
   "version": "0.1.1",
   "type": "module",
-  "description": "dsh (DeepSeek Harness) 多设备组网插件：mDNS 同网发现、密钥配对、SSH 跨网直连、SFTP 文件传输。装完在 dsh 会话内自动注册 6 个 fleet_* 工具，智能体（agent）直接调用；零 npm 依赖，Node 22 即装即用。",
+  "description": "dsh (DeepSeek Harness) 多设备组网插件：mDNS 同网发现、密钥配对、SSH 跨网直连、SFTP 文件传输。装完在 dsh 会话内自动注册 7 个 fleet_* 工具，智能体（agent）直接调用；零 npm 依赖，Node 22 即装即用。",
   "keywords": [
     "dsh",
     "dsh-plugin",
