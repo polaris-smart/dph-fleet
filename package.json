@@ -4,10 +4,10 @@
   "type": "module",
   "description": "dph 多设备组网协作插件：mDNS 同网发现、密钥配对、SSH 跨网直连。装完 dph 会话内自动注册 4 个 fleet_* 工具，智能体（agent）直接调用；CLI 预编译，Node 22 即装即用。",
   "bin": {
-    "fleet7": "bin/fleet7",
-    "fleet8": "bin/fleet8",
-    "fleet-mdns": "bin/fleet7",
-    "fleet-ssh": "bin/fleet8"
+    "fleet7": "dist/mdns/cli.js",
+    "fleet8": "dist/ssh/cli.js",
+    "fleet-mdns": "dist/mdns/cli.js",
+    "fleet-ssh": "dist/ssh/cli.js"
   },
   "engines": {
     "node": ">=22.18"
@@ -15,7 +15,6 @@
   "files": [
     "dist/",
     "src/",
-    "bin/",
     "cordis.patch.yml",
     "README.md",
     "tsconfig.json"
@@ -25,8 +24,7 @@
     "typecheck": "tsc --noEmit",
     "smoke": "bash smoke.sh",
     "pack": "npm pack",
-    "build": "tsc --noCheck -p tsconfig.build.json",
-    "prepack": "npm run build"
+    "build": "tsc --noCheck -p tsconfig.build.json"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "*"

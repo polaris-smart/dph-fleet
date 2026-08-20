@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // fleet7 局域网 CLI（dph-fleet mDNS 模块）：keygen / serve / discover / pair / paired。
 // 纯 Node 标准库 + type stripping 直跑源码，零构建。核心逻辑在 mdns/pair/server/identity。
 // pair 命令默认做合一联动（配对成功写 SSH 注册表），--no-link 可关。

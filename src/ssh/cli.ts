@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // fleet8 CLI：主控侧 SSH 池命令行。零 npm，纯 Node 标准库 + type stripping 直跑。
 // 子命令：pair / list / ssh / workspace / remove / pubkey。
 // 安全：密钥 0600、只连已配对设备；任何失败 stderr + 非零退出，不崩、不泄露密钥内容。
