@@ -6,6 +6,7 @@
 // 则把主控 SSH 公钥随配对请求发给被控（被控授权），成功后回调写 SSH 注册表。
 
 import type { FleetContext } from '../types.ts'
+import { compileParameters } from '../types.ts'
 
 import { ensureIdentity, identityFile, pairedFile } from './identity.ts'
 import { loadPaired, savePaired, upsertPaired, pairWithDevice } from './pair.ts'
@@ -40,7 +41,7 @@ export function registerMdnsTools(ctx: FleetContext, opts: MdnsModuleConfig): vo
   ctx.tools.register({
     name: 'fleet_discover',
     description: '局域网 mDNS 发现同网段所有 fleet 设备（设备名/地址/能力/是否已配对）。返回发现列表；未发现返回「未发现同网 fleet 设备」。',
-    parameters: {},
+    parameters: compileParameters({}),
     output: {
       schema: { type: 'string' },
       render: (_args, value) => [{ type: 'text', text: value }],
@@ -62,10 +63,10 @@ export function registerMdnsTools(ctx: FleetContext, opts: MdnsModuleConfig): vo
   ctx.tools.register({
     name: 'fleet_pair',
     description: '与同网目标设备密钥配对。target 为目标设备地址（host:port）或 deviceId/设备名；key 为目标设备的设备密钥（fleet-d- 开头）。校验通过即配对成功并存入主控已配对设备表（无需对方应答，无头设备兼容）。',
-    parameters: {
+    parameters: compileParameters({
       target: { type: 'string', required: true, description: '目标设备：host:port，或 deviceId（dev-…），或设备名。' },
       key: { type: 'string', required: true, description: '目标设备的设备密钥（fleet-d- 开头）。' },
-    },
+    }),
     output: {
       schema: { type: 'string' },
       render: (_args, value) => [{ type: 'text', text: value }],

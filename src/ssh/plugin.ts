@@ -6,6 +6,7 @@
 // - 注册表路径由 config.fleetHome 覆盖，空则走 FLEET_HOME / ~/.fleet。
 
 import type { FleetContext } from '../types.ts'
+import { compileParameters } from '../types.ts'
 
 import { loadSshDevices, saveSshDevices, sshDevicesFile, sshSocketsDir } from './config.ts'
 import { assertPaired, touchLastUsed } from './pool.ts'
@@ -49,11 +50,11 @@ export function registerSshTools(ctx: FleetContext, config: SshModuleConfig): vo
   ctx.tools.register({
     name: 'fleet_ssh_exec',
     description: 'SSH 直连已配对被控设备执行命令（轻量模式，不经 hub）：host 传 deviceId/主机/友好名，command 传远端 shell 命令。只连已配对设备；返回 stdout/stderr/退出码。用于「主控说一句→直连被控干活」。',
-    parameters: {
+    parameters: compileParameters({
       host: { type: 'string', required: true, description: '目标设备：deviceId / 主机 IP / 友好名（须已配对）' },
       command: { type: 'string', required: true, description: '远端 shell 命令串' },
       timeoutMs: { type: 'number', description: '执行超时毫秒（默认 120000）' },
-    },
+    }),
     output: {
       schema: { type: 'string' },
       render: (_args, value) => [{ type: 'text', text: value }],
@@ -80,10 +81,10 @@ export function registerSshTools(ctx: FleetContext, config: SshModuleConfig): vo
   ctx.tools.register({
     name: 'fleet_workspace',
     description: '设置/查看已配对被控设备的远程工作区（执行根）。传 dir 则远端 mkdir -p 并记住该目录；不传 dir 则返回当前工作区。任务书（AI 生成）在该工作区执行。',
-    parameters: {
+    parameters: compileParameters({
       host: { type: 'string', required: true, description: '目标设备：deviceId / 主机 IP / 友好名（须已配对）' },
       dir: { type: 'string', description: '远程工作区绝对路径（缺省 = 查看当前工作区）' },
-    },
+    }),
     output: {
       schema: { type: 'string' },
       render: (_args, value) => [{ type: 'text', text: value }],
@@ -115,11 +116,11 @@ export function registerSshTools(ctx: FleetContext, config: SshModuleConfig): vo
   ctx.tools.register({
     name: 'fleet_upload',
     description: '沿已配对设备的 SSH 通道上传文件：把本机文件传到目标设备的远端路径。host 传 deviceId/主机/友好名，local 传本机文件路径，remote 传远端目标路径。用于「把文件送到远端设备」。',
-    parameters: {
+    parameters: compileParameters({
       host: { type: 'string', required: true, description: '目标设备：deviceId / 主机 IP / 友好名（须已配对）' },
       local: { type: 'string', required: true, description: '本机文件路径（要上传的文件）' },
       remote: { type: 'string', required: true, description: '远端目标路径（如 /home/user/xx.txt）' },
-    },
+    }),
     output: {
       schema: { type: 'string' },
       render: (_args, value) => [{ type: 'text', text: value }],
@@ -148,11 +149,11 @@ export function registerSshTools(ctx: FleetContext, config: SshModuleConfig): vo
   ctx.tools.register({
     name: 'fleet_download',
     description: '沿已配对设备的 SSH 通道下载文件：把目标设备远端文件取回本机。host 传 deviceId/主机/友好名，remote 传远端文件路径，local 传本机保存路径。用于「把数据/文件拿回来」。',
-    parameters: {
+    parameters: compileParameters({
       host: { type: 'string', required: true, description: '目标设备：deviceId / 主机 IP / 友好名（须已配对）' },
       remote: { type: 'string', required: true, description: '远端文件路径（要取回的文件）' },
       local: { type: 'string', required: true, description: '本机保存路径（如 ./下载/xx.txt）' },
-    },
+    }),
     output: {
       schema: { type: 'string' },
       render: (_args, value) => [{ type: 'text', text: value }],
