@@ -48,12 +48,13 @@ function registeredNames(config: PluginConfig): string[] {
   return tools.map((t) => t.name).sort();
 }
 
-test('modules=both 注册 6 工具（mdns 2 + ssh 4）', () => {
+test('modules=both 注册 7 工具（mdns 2 + ssh 5）', () => {
   assert.deepEqual(registeredNames({ ...base, modules: 'both' }), [
     'fleet_discover',
     'fleet_download',
     'fleet_pair',
     'fleet_ssh_exec',
+    'fleet_status',
     'fleet_upload',
     'fleet_workspace',
   ]);
@@ -64,7 +65,7 @@ test('modules=mdns 只注册 2 工具（无 ssh 工具）', () => {
 });
 
 test('modules=ssh 只注册 4 工具（无 mdns 工具）', () => {
-  assert.deepEqual(registeredNames({ ...base, modules: 'ssh' }), ['fleet_download', 'fleet_ssh_exec', 'fleet_upload', 'fleet_workspace']);
+  assert.deepEqual(registeredNames({ ...base, modules: 'ssh' }), ['fleet_download', 'fleet_ssh_exec', 'fleet_status', 'fleet_upload', 'fleet_workspace']);
 });
 
 test('Config 默认值：modules=both + 其余默认', () => {

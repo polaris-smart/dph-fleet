@@ -99,3 +99,40 @@ export function registerMdnsTools(ctx: FleetContext, opts: MdnsModuleConfig): vo
     },
   })
 }
+
+// --- 自动应答（v0.1.0）：插件加载即上线，被控端零手动 serve ---
+
+import { MdnsResponder, localIpv4 } from './mdns.ts';
+import { createPairServer } from './server.ts';
+import { saveIdentity } from './identity.ts';
+
+/**
+ * 插件加载即上线：起 mDNS 广播 + 配对服务（生命周期挂 ctx，插件卸载自动收）。
+ * 失败静默降级（网络受限环境不炸 boot），只打一行提示。
+ * @returns 清理函数（由调用方挂到插件生命周期）。
+ */
+export async function startAutoAnnounce(opts: MdnsModuleConfig): Promise<() => void> {
+  try {
+    const file = identityFile();
+    const id = ensureIdentity({ file, name: opts.deviceName, hub: opts.hub });
+    const pairServer = await createPairServer(id, id.port);
+    id.port = pairServer.port;
+    saveIdentity(file, id);
+    const responder = new MdnsResponder({
+      deviceId: id.deviceId,
+      name: id.name,
+      port: id.port,
+      address: localIpv4(),
+      hub: id.hub,
+      capabilities: id.capabilities,
+    });
+    await responder.start();
+    return () => {
+      responder.close();
+      void pairServer.close();
+    };
+  } catch {
+    console.log('[dsh-devices] mDNS 自动应答未启动（网络受限或端口占用）；同网发现不可用，SSH 路线不受影响 · auto-announce skipped');
+    return () => {};
+  }
+}

@@ -179,3 +179,64 @@ export function registerSshTools(ctx: FleetContext, config: SshModuleConfig): vo
     },
   })
 }
+
+// --- fleet_status（v0.1.0）：存活探测，看一眼全局 ---
+
+import net from 'node:net';
+
+/** TCP 存活探测：成功/超时（毫秒），绝不 throw。 */
+function probeTcp(host: string, port: number, timeoutMs: number): Promise<{ alive: boolean; ms: number }> {
+  const start = Date.now();
+  return new Promise((resolve) => {
+    const socket = new net.Socket();
+    const done = (alive: boolean): void => {
+      socket.destroy();
+      resolve({ alive, ms: Date.now() - start });
+    };
+    socket.setTimeout(timeoutMs);
+    socket.once('connect', () => done(true));
+    socket.once('timeout', () => done(false));
+    socket.once('error', () => done(false));
+    try {
+      socket.connect(port, host);
+    } catch {
+      done(false);
+    }
+  });
+}
+
+/** 探测超时（毫秒/设备）。 */
+const PROBE_TIMEOUT_MS = 2500;
+
+/**
+ * 注册 fleet_status 工具：列出全部已配对 SSH 设备 + TCP 存活探测 + 最近使用时间。
+ * mDNS 配对设备（无 SSH 注册）不在本表，用 fleet_discover 看同网在线。
+ */
+export function registerStatusTool(ctx: FleetContext, config: SshModuleConfig): void {
+  const env: NodeJS.ProcessEnv = config.fleetHome.length > 0
+    ? { ...process.env, FLEET_HOME: config.fleetHome }
+    : process.env;
+
+  ctx.tools.register({
+    name: 'fleet_status',
+    description: '查看全部已配对 SSH 设备的存活状态：逐台 TCP 探测（在线/离线 + 延迟毫秒）+ 最近使用时间 + 工作区。用于「哪些设备现在能用」一眼判断；同网 mDNS 设备请用 fleet_discover。',
+    parameters: compileParameters({}),
+    output: {
+      schema: { type: 'string' },
+      render: (_args, value) => [{ type: 'text', text: value }],
+    },
+    async execute(_args: Record<string, unknown>, exec: { signal: AbortSignal }) {
+      const devices = loadSshDevices(sshDevicesFile(env));
+      if (devices.length === 0) return '暂无已配对 SSH 设备（配对见 /fleet help 或 fleet8 pair）';
+      const rows = await Promise.all(devices.map(async (d) => {
+        const { alive, ms } = exec.signal.aborted
+          ? { alive: false, ms: -1 }
+          : await probeTcp(d.host, d.port, PROBE_TIMEOUT_MS);
+        const state = exec.signal.aborted ? '已取消' : alive ? `🟢 在线（${ms}ms）` : '🔴 离线';
+        const used = d.lastUsedAt ? `最近使用 ${d.lastUsedAt.slice(0, 16).replace('T', ' ')}Z` : '未使用过';
+        return `· ${d.name}（${d.deviceId} @ ${d.user}@${d.host}:${d.port}）${state} · ${used}${d.workspace ? ` · 工作区 ${d.workspace}` : ''}`;
+      }));
+      return [`已配对 SSH 设备 ${devices.length} 台：`, ...rows].join('\n');
+    },
+  })
+}

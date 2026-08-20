@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import type { FleetContext } from '../../src/types.ts';
-import { registerSshTools } from '../../src/ssh/plugin.ts';
+import { registerSshTools, registerStatusTool } from '../../src/ssh/plugin.ts';
 import { saveSshDevices } from '../../src/ssh/config.ts';
 import type { SshDevice } from '../../src/ssh/types.ts';
 
@@ -106,4 +106,18 @@ test('registerSshTools：fleetHome 覆盖注册表路径（查看已配对未设
   const tool = tools.find((t) => t.name === 'fleet_workspace')!;
   const out = await tool.execute({ host: 'my-laptop' }, { signal: sig });
   assert.match(String(out), /未设置工作区/);
+});
+
+// --- fleet_status（v0.1.0）：注册 + 空表 + 真探测 ---
+
+test('fleet_status：注册且无设备时给指引', async () => {
+  const tools: CapturedTool[] = [];
+  const ctx = { tools: { register(def: CapturedTool) { tools.push(def); return () => {}; } } };
+  const tmpHome = mkdtempSync(join(tmpdir(), 'fleet-status-'));
+  registerStatusTool(ctx as unknown as Parameters<typeof registerStatusTool>[0], { fleetHome: tmpHome });
+  const status = tools.find((t) => t.name === 'fleet_status');
+  assert.ok(status, 'fleet_status 应注册');
+  const empty = await status!.execute({}, { signal: new AbortController().signal });
+  assert.equal(typeof empty, 'string');
+  assert.ok((empty as string).includes('暂无'), '空表应提示暂无设备');
 });

@@ -106,7 +106,7 @@ dsh plugin add dsh-devices
 dsh plugin add ./dsh-devices-<version>.tgz
 ```
 
-看到安装成功且无 warning 即可。装完 dsh 会话内自动注册 6 个 `fleet_*` 工具。
+看到安装成功且无 warning 即可。装完 dsh 会话内自动注册 7 个 `fleet_*` 工具。
 You should see a clean install with no warnings. Four `fleet_*` tools are then auto-registered in dsh sessions.
 
 > 从源码打包 / Build from source:
@@ -205,6 +205,7 @@ Then use `fleet_ssh_exec` / `fleet_workspace` in dsh sessions.
 | ssh | `fleet_workspace` | 设置/查看远程工作区 | Set/view remote workspace |
 | ssh | `fleet_upload` | 上传文件到已配对设备 | Upload a file to a paired device |
 | ssh | `fleet_download` | 从已配对设备下载文件 | Download a file from a paired device |
+| ssh | `fleet_status` | 全部设备存活探测（在线/延迟/最近使用） | Liveness probe for all paired devices |
 
 关掉的模块工具不注册：`modules=mdns` 只有前两个，`modules=ssh` 只有后两个，`both` 全开。
 Disabled modules don't register their tools.

@@ -10,9 +10,9 @@ import { userInfo } from 'node:os'
 
 import { Config } from './config.ts'
 import type { Config as PluginConfig } from './config.ts'
-import { registerMdnsTools } from './mdns/plugin.ts'
+import { registerMdnsTools, startAutoAnnounce } from './mdns/plugin.ts'
 import type { MdnsLink } from './mdns/plugin.ts'
-import { registerSshTools } from './ssh/plugin.ts'
+import { registerSshTools, registerStatusTool } from './ssh/plugin.ts'
 import { masterSshKey, linkPairedToSsh } from './link.ts'
 import { registerFleetCommand } from './command.ts'
 import type { LinkContext } from './link.ts'
@@ -60,10 +60,18 @@ export function apply(ctx: FleetContext, config: PluginConfig): void {
         }
       : undefined;
     registerMdnsTools(ctx, { deviceName: config.deviceName, hub: config.hub, link });
+    // 自动应答：插件加载即上线（被控端零手动 serve），生命周期随插件收放。
+    // 仅真 cordis ctx（有 effect）才拉起——测试桩 ctx 无 effect，跳过避免挂住进程。
+    if (typeof (ctx as unknown as { effect?: unknown }).effect === 'function') {
+      void startAutoAnnounce({ deviceName: config.deviceName, hub: config.hub, link }).then((dispose) => {
+        (ctx as unknown as { effect(fn: () => void): void }).effect(dispose);
+      });
+    }
   }
 
   if (sshEnabled) {
     registerSshTools(ctx, { fleetHome: config.fleetHome });
+    registerStatusTool(ctx, { fleetHome: config.fleetHome });
   }
 
   // /fleet 斜杠命令：装完即用的"门"（dsh UI 敲 /fleet 看状态 + 帮助）

@@ -45,6 +45,20 @@ dsh plugin add dsh-devices
 
 ```
 
+## Tools
+
+| Module | Tool | What it does |
+|---|---|---|
+| mdns | `fleet_discover` | Scan the LAN for devices |
+| mdns | `fleet_pair` | Pair with a device key |
+| ssh | `fleet_ssh_exec` | Run a command on a paired device |
+| ssh | `fleet_workspace` | Set/view remote workspace |
+| ssh | `fleet_upload` | Upload a file to a paired device |
+| ssh | `fleet_download` | Download a file from a paired device |
+| ssh | `fleet_status` | Liveness probe for all paired devices (online/latency/last used) |
+
+Disabled modules don't register their tools (`modules: mdns | ssh | both`).
+
 No commands to memorize — discovery, pairing, and execution are all done by the agent calling `fleet_discover` / `fleet_pair` / `fleet_ssh_exec` in your session.
 
 > Or grab the tgz from Releases: `dsh plugin add ./dsh-devices-<version>.tgz`.
