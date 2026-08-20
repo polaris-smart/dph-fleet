@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dsh-devices · DSH 多设备组网插件</title>
+<meta name="description" content="DSH (DeepSeek Harness) 多设备组网插件：mDNS 同网发现、密钥配对、SSH 跨网直连、SFTP 文件传输。一条命令，所有设备变成你的舰队。">
+<style>
+  :root { --bg:#0f1115; --card:#171a21; --border:#232733; --text:#e6e9ef; --muted:#8b93a3; --accent:#4b6fff; --green:#34d399; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  .wrap { max-width:880px; margin:0 auto; padding:48px 24px 80px; }
+  /* Hero */
+  .hero { text-align:center; padding:40px 0 32px; }
+  .logo { display:inline-flex; align-items:center; gap:10px; font-size:28px; font-weight:700; letter-spacing:-0.5px; }
+  .logo .dot { width:10px; height:10px; border-radius:50%; background:var(--accent); display:inline-block; }
+  .tagline { margin-top:16px; font-size:18px; color:var(--muted); }
+  .big { margin-top:8px; font-size:32px; font-weight:800; background:linear-gradient(135deg,#4b6fff,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .install { margin-top:28px; display:inline-block; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 24px; font-family:"SF Mono","JetBrains Mono",Consolas,monospace; font-size:15px; color:var(--green); }
+  .install .dollar { color:var(--muted); }
+  .badges { margin-top:20px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .badge { font-size:12px; padding:4px 12px; border-radius:999px; border:1px solid var(--border); color:var(--muted); }
+  .badge.green { color:var(--green); border-color:#1f4d3a; }
+  /* Sections */
+  h2 { font-size:20px; font-weight:700; margin:48px 0 16px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px; }
+  .card .icon { font-size:22px; }
+  .card h3 { font-size:15px; margin:8px 0 6px; }
+  .card p { font-size:13px; color:var(--muted); }
+  /* Tools list */
+  .tools { display:flex; flex-wrap:wrap; gap:8px; }
+  .tool { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:6px 14px; font-family:monospace; font-size:13px; }
+  /* Steps */
+  .steps { counter-reset:step; display:flex; flex-direction:column; gap:14px; }
+  .step { display:flex; gap:14px; align-items:flex-start; }
+  .step .num { counter-increment:step; width:28px; height:28px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; }
+  .step code { background:var(--card); border:1px solid var(--border); padding:2px 8px; border-radius:6px; font-family:monospace; font-size:13px; color:var(--green); }
+  .footer { margin-top:64px; text-align:center; color:var(--muted); font-size:13px; }
+  .footer a { color:var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="logo"><span class="dot"></span> dsh-devices</div>
+    <div class="tagline">DSH (DeepSeek Harness) 多设备组网插件</div>
+    <div class="big">把你的设备变成一支舰队</div>
+    <div class="install"><span class="dollar">$ </span>dsh plugin add dsh-devices</div>
+    <div class="badges">
+      <span class="badge green">✓ macOS</span>
+      <span class="badge green">✓ Linux</span>
+      <span class="badge green">✓ Windows</span>
+      <span class="badge">零 npm 依赖</span>
+      <span class="badge">MIT</span>
+    </div>
+  </div>
+
+  <h2>为什么用 dsh-devices</h2>
+  <div class="grid">
+    <div class="card"><div class="icon">🔍</div><h3>mDNS 同网发现</h3><p>同一局域网自动发现设备，零配置。</p></div>
+    <div class="card"><div class="icon">🔑</div><h3>密钥配对</h3><p>一个 key 完成配对，WiFi 式体验，无头设备友好。</p></div>
+    <div class="card"><div class="icon">🌐</div><h3>SSH 跨网直连</h3><p>公网设备直接指挥，跨网络执行命令。</p></div>
+    <div class="card"><div class="icon">📁</div><h3>SFTP 文件传输</h3><p>双向传文件，数据随取随用。</p></div>
+    <div class="card"><div class="icon">🩺</div><h3>存活探测</h3><p>一眼看清哪些设备在线、延迟多少。</p></div>
+    <div class="card"><div class="icon">🤖</div><h3>Agent 原生</h3><p>装完 dsh 会话内自动注册工具，对 AI 说一句话就能指挥设备。</p></div>
+  </div>
+
+  <h2>7 个工具</h2>
+  <div class="tools">
+    <span class="tool">fleet_discover</span>
+    <span class="tool">fleet_pair</span>
+    <span class="tool">fleet_ssh_exec</span>
+    <span class="tool">fleet_workspace</span>
+    <span class="tool">fleet_upload</span>
+    <span class="tool">fleet_download</span>
+    <span class="tool">fleet_status</span>
+  </div>
+
+  <h2>30 秒上手</h2>
+  <div class="steps">
+    <div class="step"><div class="num">1</div><div>安装 dsh（Node 22.19+）：<code>npx @deepseek-ai/dsh web</code></div></div>
+    <div class="step"><div class="num">2</div><div>安装插件：<code>dsh plugin add dsh-devices</code></div></div>
+    <div class="step"><div class="num">3</div><div>重启 dsh，敲 <code>/fleet</code> 或对 AI 说 "调用 fleet_discover"</div></div>
+  </div>
+
+  <h2>三平台实测</h2>
+  <p style="color:var(--muted);font-size:14px;">安装、boot、配对、远程执行、文件传输在 macOS / Ubuntu / Windows Server 2025 与 Windows 桌面版全链路实测通过。92 项测试，运行时零 npm 依赖。</p>
+
+  <div class="footer">
+    <a href="https://github.com/polaris-smart/dsh-devices">GitHub</a> · 
+    <a href="https://www.npmjs.com/package/dsh-devices">npm</a> · 
+    MIT © polaris-smart
+  </div>
+</div>
+</body>
+</html>
