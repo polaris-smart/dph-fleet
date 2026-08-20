@@ -68,4 +68,8 @@ export function apply(ctx: FleetContext, config: PluginConfig): void {
 
   // /fleet 斜杠命令：装完即用的"门"（dsh UI 敲 /fleet 看状态 + 帮助）
   registerFleetCommand(ctx);
+
+  // 装完即见的就绪提示：用户重启 dsh 后能在输出里确认插件活了 + 知道下一步。
+  const enabled = [mdnsEnabled && 'mdns', sshEnabled && 'ssh'].filter(Boolean).join('+') || 'none';
+  console.log(`[dsh-devices] 已就绪（模块：${enabled}）。敲 /fleet 查看设备，或对 AI 说"调用 fleet_discover" · ready, type /fleet`);
 }

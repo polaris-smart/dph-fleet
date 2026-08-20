@@ -158,3 +158,34 @@ export function sshExec(
 export function shellQuote(s: string): string {
   return `'${s.replace(/'/g, `'\\''`)}'`;
 }
+
+/**
+ * 判定是否连接类失败（值得重试）：exit 255 = ssh 自身连不上/断线（网络瞬抖）。
+ * 远端命令的非 0 退出码是业务语义，不重试。
+ */
+export function isConnectFailure(r: SshExecResult): boolean {
+  return !r.ok && (r.exitCode === 255 || r.exitCode === null);
+}
+
+/** 连接类重试次数（指数退避 500ms/1500ms）。 */
+const CONNECT_RETRY_DELAYS_MS = [500, 1500];
+
+/**
+ * 带连接重试的执行：瞬断（exit 255/无法启动）自动重试 2 次（500ms/1500ms 退避）。
+ * 超时/取消/远端业务失败不重试，原样返回最后一次结果。
+ */
+export async function sshExecWithRetry(
+  device: SshDevice,
+  command: string,
+  opts: { socketDir?: string; signal?: AbortSignal; timeoutMs?: number } = {},
+): Promise<SshExecResult> {
+  let result = await sshExec(device, command, opts);
+  for (const delayMs of CONNECT_RETRY_DELAYS_MS) {
+    if (result.ok) return result;
+    if (opts.signal?.aborted) return result;
+    if (!isConnectFailure(result)) return result;
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    result = await sshExec(device, command, opts);
+  }
+  return result;
+}

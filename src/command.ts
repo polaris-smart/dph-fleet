@@ -12,7 +12,7 @@ import { loadPaired, savePaired, upsertPaired, pairWithDevice, nowIso } from './
 import { discoverWithPaired, resolveTarget, formatDiscoveredDevice } from './mdns/discover.ts'
 import { sshDevicesFile, loadSshDevices } from './ssh/config.ts'
 import { findSshDevice } from './ssh/pool.ts'
-import { sshExec } from './ssh/ssh.ts'
+import { sshExecWithRetry } from './ssh/ssh.ts'
 
 /** 发现窗口（毫秒），与 fleet_discover 工具一致。 */
 const DISCOVER_TIMEOUT_MS = 1500
@@ -140,7 +140,7 @@ async function sshCmd(rest: string): Promise<{ kind: 'success' | 'error'; text: 
   if (device === undefined) {
     return { kind: 'error' as const, text: `设备「${target}」未配对。先用 /fleet pair 配对（mDNS 设备）或 fleet8 pair（SSH 跨网设备）。` };
   }
-  const r = await sshExec(device, command, { timeoutMs: SSH_TIMEOUT_MS });
+  const r = await sshExecWithRetry(device, command, { timeoutMs: SSH_TIMEOUT_MS });
   const out = r.stdout;
   const err = r.stderr;
   if (r.ok) {

@@ -30,7 +30,8 @@
     "cordis.patch.yml",
     "TROUBLESHOOTING.md",
     "README.md",
-    "tsconfig.json"
+    "tsconfig.json",
+    "README.zh-CN.md"
   ],
   "scripts": {
     "test": "node --test",

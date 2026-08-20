@@ -10,7 +10,7 @@ import { compileParameters } from '../types.ts'
 
 import { loadSshDevices, saveSshDevices, sshDevicesFile, sshSocketsDir } from './config.ts'
 import { assertPaired, touchLastUsed } from './pool.ts'
-import { sshExec } from './ssh.ts'
+import { sshExecWithRetry } from './ssh.ts'
 import { scpUpload, scpDownload } from './sftp.ts'
 import { setWorkspace, getWorkspace } from './workspace.ts'
 import type { SshExecResult } from './types.ts'
@@ -68,7 +68,7 @@ export function registerSshTools(ctx: FleetContext, config: SshModuleConfig): vo
       const devices = loadSshDevices(devicesFile);
       const paired = assertPaired(devices, host);
       if ('error' in paired) return paired.error;
-      const result = await sshExec(paired.device, command, {
+      const result = await sshExecWithRetry(paired.device, command, {
         socketDir: sshSocketsDir(env),
         signal: exec.signal,
         timeoutMs: typeof args.timeoutMs === 'number' ? args.timeoutMs : undefined,

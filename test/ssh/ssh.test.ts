@@ -74,3 +74,18 @@ test('shellQuote：单引号包裹并转义内嵌单引号', () => {
   assert.equal(shellQuote('/tmp/ws'), `'/tmp/ws'`);
   assert.equal(shellQuote(`a'b`), `'a'\\''b'`);
 });
+
+// --- 连接重试（v0.1.0 发布前三件套）：瞬断重试/业务失败不重试 ---
+
+import { isConnectFailure } from '../../src/ssh/ssh.ts';
+
+test('isConnectFailure：exit 255/无法启动 = 连接类（可重试）', () => {
+  assert.equal(isConnectFailure({ ok: false, exitCode: 255, stdout: '', stderr: '', error: 'x' }), true);
+  assert.equal(isConnectFailure({ ok: false, exitCode: null, stdout: '', stderr: '', error: 'x' }), true);
+});
+
+test('isConnectFailure：远端业务退出码/成功 = 不重试', () => {
+  assert.equal(isConnectFailure({ ok: false, exitCode: 1, stdout: '', stderr: '', error: 'x' }), false);
+  assert.equal(isConnectFailure({ ok: false, exitCode: 2, stdout: '', stderr: '', error: 'x' }), false);
+  assert.equal(isConnectFailure({ ok: true, exitCode: 0, stdout: 'ok', stderr: '' }), false);
+});
