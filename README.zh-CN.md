@@ -362,42 +362,25 @@ Found a bug or have an idea?
 
 ## 更新日志 · Changelog
 
-**v0.2.10**（2026-08-20）
-- ✨ `/fleet` 斜杠命令真执行化：discover 真扫描 / pair 真配对 / ssh 真直连（此前仅打印提示）；错误提示带下一步指引
-- ✨ 新增 SFTP 文件传输：`fleet_upload` / `fleet_download`（沿已配对设备的 SSH 通道传文件，数据/文件可双向打通）
-- 🔧 零依赖化完成：去除对 dsh-tools/schemastery 的运行时与声明依赖，任何 dsh 环境（源码或 npm 安装）都能 `dsh plugin add` 直接安装
-- 🔧 插件入口指向预编译产物（dist/plugin.js），安装即用，无需构建
-- 功能：mDNS 同网发现 + 密钥配对 + SSH 跨网直连 + SFTP 文件传输 + `/fleet` 命令；模块开关 `modules: mdns | ssh | both`
+**v0.1.1**（2026-08-20）
+- 🔒 发布包内部代号清零：mDNS 服务类型与 SSH 密钥注释统一为 `dsh-devices`（对外无内部痕迹）
+- 📝 README 新增「各平台注意事项」（macOS / Linux / Windows 实测要点）
 
-**v0.2.9**（2026-08-19）
-- 🔧 零依赖化重构：去除对 dsh-tools/schemastery 的运行时依赖，任何 dsh 环境（源码或 npm 安装）都能直接 `dsh plugin add` 安装
-- ✨ 插件入口指向预编译产物，安装即用，无需构建
-- 功能：mDNS 同网发现 + 密钥配对 + SSH 跨网直连 + `/fleet` 命令；模块开关 `modules: mdns | ssh | both`
+**v0.1.0**（2026-08-20）
+- 🎉 正式发布（npm + GitHub Release）：`dsh plugin add dsh-devices` 一条命令安装
+- ✨ mDNS 自动应答：插件加载即上线，被控端零手动 `serve`
+- ✨ 新增 `fleet_status`：全部已配对设备存活探测（在线/延迟/最近使用），第 7 个工具
+- ✨ `/fleet` 斜杠命令真执行化：discover 真扫描 / pair 真配对 / ssh 真直连；错误提示带下一步指引
+- ✨ SFTP 文件传输：`fleet_upload` / `fleet_download`（沿 SSH 通道双向传文件）
+- 🔧 SSH 瞬断轻量重试（连接类失败自动退避重试）；Windows 全链路适配（ControlMaster/IdentityAgent/CLI 退出）
+- 🧪 验证：92 项测试 + 三平台实测（macOS / Ubuntu / Windows Server 2025）
 
-**v0.2.8**（2026-08-19）
-- 🔧 回归纯组网定位：**移除 agent 模块与 `agent_ask` 工具**，Fleet 专注多设备组网协作（mDNS 同网发现 + 密钥配对 + SSH 跨网直连 + `/fleet` 命令）
-- 修复发布物中与本产品无关的内部表述与本机路径（清理干净）
-- 功能与 v0.2.7 一致；模块开关 `modules: mdns | ssh | both`
+**历史版本 · History**（v0.2.x 时代，dph-fleet 更名前）
 
-**v0.2.7**（2026-08-19）
-- ✨ 新增 `/fleet` 斜杠命令：装完在 dsh UI 敲 `/fleet` 即显示本机身份 + 已配对设备 + 使用引导——**解决"装完不知道下一步做什么"**
-- 不再依赖模型工具调用配置，用户有直接的入口
-
-**v0.2.6**（2026-08-19）
-- 📝 门面更新：README 突出"智能体直接调用"亮点、修复"零依赖"表述为"运行时零依赖"、新增 Changelog；npm 描述同步
-- 代码与 v0.2.5 相同，纯文档/元数据更新
-
-**v0.2.5**（2026-08-19）
-- 🐛 修复 CLI：`fleet7` / `fleet8` 在 Node 22 下 npm 安装后可用（预编译 `dist/`，根治 node_modules 内 .ts type stripping 限制）
-- ✨ 发布携带编译产物，命令行无需构建即可运行
-- 不影响 dsh 会话工具（cordis 加载，原本正常）
-
-**v0.2.4**（2026-08-17）
-- 发布到 npm：一条命令 `dsh plugin add dsh-devices` 安装
-- mDNS + SSH 两模块合一，`modules: mdns | ssh | both` 开关
-
-**v0.2.0**（2026-08-18）
-- 去中心化转向：mDNS 同网发现 + 密钥配对 + SSH 跨网直连，单插件交付
+- v0.2.10：`/fleet` 命令面与 SFTP 完善，零依赖化收尾
+- v0.2.8~v0.2.9：回归纯组网定位，零依赖化重构，预编译产物安装即用
+- v0.2.5~v0.2.7：CLI 预编译修复、`/fleet` 斜杠命令上线、门面与文档迭代
+- v0.2.0~v0.2.4：去中心化转向（mDNS + SSH 合一），首个 npm 发布
 
 ## 贡献者 · Contributors
 

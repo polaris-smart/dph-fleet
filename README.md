@@ -232,24 +232,18 @@ Found a bug or have an idea?
       Task-board claiming: post tasks from any device, paired devices claim them
 
 
-**v0.2.10**（2026-08-20）
+## Changelog
 
-**v0.2.9**（2026-08-19）
+**v0.1.1** (2026-08-20)
+- 🔒 Internal codenames removed from the package (mDNS service type & SSH key comment now `dsh-devices`); per-platform notes added to README.
 
-**v0.2.8**（2026-08-19）
+**v0.1.0** (2026-08-20)
+- 🎉 First release on npm + GitHub: `dsh plugin add dsh-devices`
+- ✨ mDNS auto-announce (no manual `serve`), `fleet_status` liveness probe (7th tool), real `/fleet` commands, SFTP transfer, SSH connect-retry, Windows adaptations
+- 🧪 92 tests + verified on macOS / Ubuntu / Windows Server 2025
 
-**v0.2.7**（2026-08-19）
+**History** (pre-rename, v0.2.x era)
 
-**v0.2.6**（2026-08-19）
-
-**v0.2.5**（2026-08-19）
-
-**v0.2.4**（2026-08-17）
-
-**v0.2.0**（2026-08-18）
-
-
-
-
+- v0.2.10 → v0.2.0: `/fleet` command, SFTP, zero-dependency rebuild, CLI precompile, decentralized pivot (mDNS + SSH)
 
 MIT © polaris-smart
