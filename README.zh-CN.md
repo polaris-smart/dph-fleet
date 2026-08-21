@@ -167,7 +167,7 @@ Pair once, use forever — B has authorized A's public key; A remembers how to r
 设备不在同一局域网时（如家里指挥云服务器），手动配对：
 When devices are not on the same LAN (e.g., commanding a cloud server from home):
 
-> **让 agent 帮你配对 / Let your agent do the pairing**：配对命令也可以直接让 dsh 会话里的 agent（或你的 ZCode / Hermes）执行——对 agent 说"用 fleet8 帮我配对服务器 203.0.113.7，用户 ubuntu，名字 my-server"，agent 会跑命令并把输出的公钥给你（你再贴到对端）。不需要自己记命令。
+> **让 agent 帮你配对 / Let your agent do the pairing**：配对命令也可以直接让 dsh 会话里的 agent 执行——对 agent 说"用 fleet8 帮我配对服务器 203.0.113.7，用户 ubuntu，名字 my-server"，agent 会跑命令并把输出的公钥给你（你再贴到对端）。不需要自己记命令。
 
 **第 1 步 / Step 1**：在你这台（主控）生成配对 / Pair from your side
 
@@ -246,7 +246,7 @@ Disabled modules don't register their tools.
 错误有具体指引（如"设备未配对 → 先 /fleet pair"）；文件传输与工作区请让 AI 调 `fleet_upload` 等工具。
 Errors carry next-step guidance; file transfer & workspace go through the agent tools.
 
-**智能体直接调用 / Call from any dsh agent**：装完插件，在你的 dsh 会话里对 AI 说一句"调用 `fleet_discover`"即可发现设备；配合同网另一台设备的密钥后即可用 `fleet_ssh_exec` 指挥它。无需额外配置——工具注册给 dsh 会话内的所有 agent（hermes、zcode 等）。
+**智能体直接调用 / Call from any dsh agent**：装完插件，在你的 dsh 会话里对 AI 说一句"调用 `fleet_discover`"即可发现设备；配合同网另一台设备的密钥后即可用 `fleet_ssh_exec` 指挥它。无需额外配置——工具注册给 dsh 会话内的所有 agent。
 After install, just say "call `fleet_discover`" in your dsh session to see LAN devices; pair once, then command remote devices with `fleet_ssh_exec`. No extra config — tools are exposed to every agent in the dsh session.
 
 **安全约定 / Security**：只连已配对设备；密钥文件强制 0600；所有错误返回可读文本，不炸会话。
