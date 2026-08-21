@@ -49,6 +49,12 @@ function usage(): string {
     '      移除已配对设备',
     '  fleet8 pubkey <目标>',
     '      打印设备公钥（重新配对被控 authorized_keys 用）',
+    '  fleet8 invite <本机IP或域名> [--port 22] --user <对端用户名>',
+    '      生成邀请码 host:port/user/token，发给要入队的设备（v0.1.2）',
+    '  fleet8 join <邀请码>',
+    '      新设备一条命令入队：解析码 + 生成密钥 + 登记 + 打印公钥（v0.1.2）',
+    '  fleet8 allow <设备ID> "<公钥>"',
+    '      主控授权：把 join 打印的公钥写入本机 authorized_keys（v0.1.2）',
     '  fleet8 --help',
     '      本帮助',
   ].join('\n');
