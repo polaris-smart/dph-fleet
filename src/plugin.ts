@@ -1,4 +1,4 @@
-// dsh-devices v0.2.0 单插件（mDNS + SSH 合一，FLEET-V02-MERGE）。
+// dsh-devices 单插件（mDNS + SSH 合一，FLEET-V02-MERGE）。
 // 一个插件装两模块，按 config.modules 开关注册工具：
 //   - mdns 开 → fleet_discover / fleet_pair
 //   - ssh  开 → fleet_ssh_exec / fleet_workspace

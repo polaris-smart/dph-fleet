@@ -193,6 +193,30 @@ fleet8 ssh my-server "hostname"
 之后在 dsh 会话里即可用 `fleet_ssh_exec` / `fleet_workspace` 指挥该设备。
 Then use `fleet_ssh_exec` / `fleet_workspace` in dsh sessions.
 
+### 场景 C：一键舰队（v0.1.2 新增）
+### Scenario C: One-command fleet join (new in v0.1.2)
+
+把「拉一台新设备入伙」从手工配密钥压缩成三条命令——邀请码通过微信/电话发给对方即可：
+Onboarding a new device in three commands — the invite code travels over WeChat/phone, nothing to hand-configure:
+
+**主控 / Host**：生成邀请码 / Generate an invite code
+```sh
+fleet8 invite <本机IP或域名> --user <对端用户名> --port 22
+# 输出：host:port/user/token 形式的邀请码，发给对方
+```
+
+**新设备 / New device**：一条命令入队 / Join with one command
+```sh
+fleet8 join <邀请码>
+# 自动：解析邀请码 → 生成 SSH 密钥 → 登记设备 → 打印公钥
+```
+
+**主控 / Host**：授权入队 / Authorize
+```sh
+fleet8 allow <设备ID> "<上一步打印的公钥>"
+# 完成。新设备即可 fleet8 ssh / 在 dsh 会话里被指挥
+```
+
 ---
 
 ## 工具一览 · Tools

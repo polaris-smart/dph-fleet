@@ -165,6 +165,28 @@ fleet8 ssh my-server "hostname"
 
 Then use `fleet_ssh_exec` / `fleet_workspace` in dsh sessions.
 
+### Scenario C: One-command fleet join (new in v0.1.2)
+
+Onboarding a new device in three commands — the invite code travels over WeChat/phone, no manual key setup:
+
+**Host** — generate an invite code:
+```sh
+fleet8 invite <your-ip-or-host> --user <remote-user> --port 22
+# prints an invite code: host:port/user/token — send it to your teammate
+```
+
+**New device** — join with one command:
+```sh
+fleet8 join <invite-code>
+# parses the code, generates an SSH keypair, registers the device, prints the public key
+```
+
+**Host** — authorize:
+```sh
+fleet8 allow <device-id> "<public key from the step above>"
+# done — the new device can now be reached via fleet8 ssh / fleet_* tools
+```
+
 ---
 
 

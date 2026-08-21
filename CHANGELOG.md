@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.1.2 — 2026-08-21
+
+一键舰队 / One-command fleet join.
+
+### 功能 / Features
+
+- **邀请码入队三连 / Invite-based onboarding**：`fleet8 invite`（主控生成 host:port/user/token 邀请码）→ `fleet8 join`（新设备一条命令：解析码 + 生成密钥 + 登记 + 打印公钥）→ `fleet8 allow`（主控写 authorized_keys 完成授权）
+- 真实跨机闭环验证（HK ↔ Mac）/ verified end-to-end across real machines
+- **版本自报改为动态读取 package.json**，mDNS 身份不再硬编码版本号 / mDNS identity version now read from package.json at build time
+- package.json 补 `repository` 字段（dshmarket 1.15.0+ 下载量关联）/ repository field for dshmarket download-count linking
+
 ## v0.2.3 — 2026-08-18
 
 首个公开版本 / First public release.
